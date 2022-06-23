@@ -3,14 +3,15 @@ import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyles = createGlobalStyle`
 
-html {font-size: 100%;} /*16px*/
+html {font-size: 100%;}
 
 body {
-  background: white;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Madefor', sans-serif;
   font-weight: 400;
   line-height: 1.75;
   color: #000000;
+  margin: 0;
+  padding: 0;
 }
 
 p {margin-bottom: 1rem;}

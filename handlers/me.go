@@ -1,20 +1,31 @@
 package handlers
 
-// func GetUserProfile(w http.ResponseWriter, r *http.Request) {
-// 	accessToken, _ := r.Cookie("access_token")
+import (
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
 
-// 	response, err := http.Get(oauthGoogleUrlAPI + accessToken.Value)
-// 	if err != nil {
-// 		fmt.Printf("Error getting user profile: %s", err.Error())
-// 		return
-// 	}
-// 	defer response.Body.Close()
+	"github.com/gin-gonic/gin"
+)
 
-// 	contents, err := ioutil.ReadAll(response.Body)
-// 	if err != nil {
-// 		return
-// 	}
+func GetUserProfile(c *gin.Context) {
 
-// 	w.Write(contents)
+	accessToken, err := c.Request.Cookie(("access_token"))
+	if err != nil {
+		fmt.Printf("Error getting user profile: %s", err.Error())
+	}
 
-// }
+	response, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + accessToken.Value)
+	if err != nil {
+		fmt.Printf("Error getting user profile: %s", err.Error())
+		return
+	}
+	defer response.Body.Close()
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	c.Data(http.StatusOK, "application/json", body)
+}
