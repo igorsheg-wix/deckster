@@ -1,38 +1,52 @@
 import React, { FC, useEffect } from 'react'
-import { Route, Routes, useNavigate } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { getCookie } from 'utils/cookie'
+import Deckster from 'views/Deckster'
+import Home from 'views/Home'
 import useDecksterStore from './stores'
-import Deckster from './views/Deckster'
 import Login from './views/Login'
 
 const App: FC = () => {
   const { set } = useDecksterStore()
-  const navigate = useNavigate()
-  const accessToken = getCookie('access_token')
 
   useEffect(() => {
-    set((d) => {
-      d.accessToken = accessToken
-    })
-  }, [document.cookie])
-
-  useEffect(() => {
-    if (accessToken && accessToken.length) {
-      navigate('/feed')
-    } else {
-      navigate('/login')
-    }
-  }, [accessToken])
+    fetch('/api/me').then((x) =>
+      x.json().then((user) =>
+        set((s) => {
+          s.userInfo = user
+        })
+      )
+    )
+  }, [])
 
   return (
     <Wrap>
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/feed" element={<Deckster />} />
+        <Route
+          path="/editor"
+          element={
+            <RequireAuth>
+              <Deckster />
+            </RequireAuth>
+          }
+        />
       </Routes>
     </Wrap>
   )
+}
+
+function RequireAuth({ children }: { children: JSX.Element }) {
+  let location = useLocation()
+  const accessToken = getCookie('access_token')
+
+  if (!accessToken) {
+    return <Navigate to="/login" state={{ from: location }} replace />
+  }
+
+  return children
 }
 
 const Wrap = styled.div`

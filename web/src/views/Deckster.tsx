@@ -1,20 +1,37 @@
-import { Button } from '@mantine/core'
+import { Editor } from 'components/Editor'
+import Flex from 'components/Flex'
+import Navigation from 'components/Navigation/Navigation'
+import { Viewer } from 'components/Viewer'
 import React, { FC } from 'react'
-import { getCookie } from 'utils/cookie'
+import styled from 'styled-components'
 
-const Feed: FC = () => {
-  const loginHandler = () => {
-    console.log(getCookie('access_token'))
-    fetch('/api/me').then((x) => x.json().then((res) => console.log(res)))
-  }
-
+const Deckster: FC = () => {
   return (
-    <div>
-      <Button size="md" onClick={loginHandler}>
-        Click me
-      </Button>
-    </div>
+    <Layout column>
+      <Navigation />
+      <Wrap>
+        <Editor />
+        <Viewer />
+      </Wrap>
+    </Layout>
   )
 }
 
-export default Feed
+const Layout = styled(Flex)`
+  width: 100%;
+  height: 100%;
+  display: flex;
+`
+const Wrap = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  max-height: calc(100vh - 96px);
+  flex-direction: row;
+  justify-content: flex-start;
+`
+
+export default Deckster

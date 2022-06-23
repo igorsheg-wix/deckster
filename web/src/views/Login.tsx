@@ -1,27 +1,32 @@
 import { Button } from '@mantine/core'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import useDecksterStore from 'stores'
 import styled from 'styled-components'
 import Flex from '../components/Flex'
-import Padder from '../components/Padder'
 
 const Login = () => {
+  const { userInfo } = useDecksterStore()
+  let navigate = useNavigate()
+
   const loginHandler = () => {
-    window.open('/auth/google/login', '_self')
+    window.open('/oauth/login', '_self')
   }
 
+  useEffect(() => {
+    if (userInfo) {
+      navigate('/editor', { replace: true })
+    }
+  }, [userInfo])
+
   return (
-    <>
-      <Wrap justify="center" align="center">
-        <Content column justify="center" align="center">
-          <h1>Deckster</h1>
-          <p>Create a great presentation deck - story first.</p>
-          <Padder y={36} />
-          <Button size="md" onClick={loginHandler}>
-            Sign in with Google
-          </Button>
-        </Content>
-      </Wrap>
-    </>
+    <Wrap justify="center" align="center">
+      <Content column justify="center" align="center">
+        <Button size="md" onClick={loginHandler}>
+          Sign in with Google
+        </Button>
+      </Content>
+    </Wrap>
   )
 }
 

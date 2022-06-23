@@ -5,6 +5,7 @@
     "module": "commonjs",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "jsx": "react",
+    "allowJs": true,
     "noEmit": true,
     "strict": true,
     "noUnusedLocals": true,
