@@ -1,15 +1,14 @@
 import { marked } from 'marked'
 import React, { useCallback, useMemo } from 'react'
 import {
-  BaseEditor,
   createEditor,
   Descendant,
   Editor,
   Element as SlateElement,
+  Node,
   Point,
   Range,
   Text,
-  Node,
   Transforms,
 } from 'slate'
 import { withHistory } from 'slate-history'
@@ -21,7 +20,7 @@ import {
   withReact,
 } from 'slate-react'
 import useDecksterStore from 'stores'
-import styled from 'styled-components'
+import styles from './Editor.module.scss'
 
 const SHORTCUTS = {
   '*': 'list-item',
@@ -100,7 +99,7 @@ const DecksterEditor = () => {
   }, [])
 
   return (
-    <Wrap>
+    <div className={styles.root}>
       <Slate
         onChange={() => onChangeHanlder()}
         editor={editor}
@@ -112,7 +111,7 @@ const DecksterEditor = () => {
           placeholder="Start wiring your story"
         />
       </Slate>
-    </Wrap>
+    </div>
   )
 }
 
@@ -232,77 +231,77 @@ const Element = ({ attributes, children, element }: any) => {
   }
 }
 
-const Wrap = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  padding: 30px;
-  justify-content: center;
-  align-items: flelx-start;
-  box-sizing: border-box;
-  max-height: calc(100vh - 96px);
-  flex-direction: row;
-  justify-content: flex-start;
-  box-shadow: 1px 0 0 #ebebeb;
+// const Wrap = styled.div`
+//   width: 100%;
+//   height: 100%;
+//   display: flex;
+//   padding: 30px;
+//   justify-content: center;
+//   align-items: flelx-start;
+//   box-sizing: border-box;
+//   max-height: calc(100vh - 96px);
+//   flex-direction: row;
+//   justify-content: flex-start;
+//   box-shadow: 1px 0 0 #ebebeb;
 
-  [role='textbox'] {
-    flex-grow: 1;
-    flex-shrink: 1;
-    /* resize: none;
-    outline: none;
-    border: none; */
-    font-size: 16px;
-  }
+//   [role='textbox'] {
+//     flex-grow: 1;
+//     flex-shrink: 1;
+//     /* resize: none;
+//     outline: none;
+//     border: none; */
+//     font-size: 16px;
+//   }
 
-  p {
-    margin-bottom: 1rem;
-  }
+//   p {
+//     margin-bottom: 1rem;
+//   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5 {
-    margin: 3rem 0 1.38rem;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 400;
-    line-height: 1.3;
-  }
+//   h1,
+//   h2,
+//   h3,
+//   h4,
+//   h5 {
+//     margin: 3rem 0 1.38rem;
+//     font-family: 'Poppins', sans-serif;
+//     font-weight: 400;
+//     line-height: 1.3;
+//   }
 
-  h1 {
-    margin-top: 0;
-    font-size: 1.383rem;
-  }
+//   h1 {
+//     margin-top: 0;
+//     font-size: 1.383rem;
+//   }
 
-  h2 {
-    font-size: 1.296rem;
-  }
+//   h2 {
+//     font-size: 1.296rem;
+//   }
 
-  h3 {
-    font-size: 1.215rem;
-  }
+//   h3 {
+//     font-size: 1.215rem;
+//   }
 
-  h4 {
-    font-size: 1.138rem;
-  }
+//   h4 {
+//     font-size: 1.138rem;
+//   }
 
-  h5 {
-    font-size: 1.067rem;
-  }
+//   h5 {
+//     font-size: 1.067rem;
+//   }
 
-  small,
-  .text_small {
-    font-size: 0.937rem;
-  }
-`
+//   small,
+//   .text_small {
+//     font-size: 0.937rem;
+//   }
+// `
 
-const StyledEditor = styled(Editable)`
-  flex-grow: 1;
-  flex-shrink: 1;
-  resize: none;
-  outline: none;
-  border: none;
-  font-size: 16px;
-`
+// const StyledEditor = styled(Editable)`
+//   flex-grow: 1;
+//   flex-shrink: 1;
+//   resize: none;
+//   outline: none;
+//   border: none;
+//   font-size: 16px;
+// `
 
 export { DecksterEditor }
