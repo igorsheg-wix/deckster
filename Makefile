@@ -2,14 +2,18 @@
 
 default:  start-dev
 
-web-watch:
-	cd web &&  yarn run esbuild src/index.tsx --color=true --bundle --watch --color=true --outfile=www/static/bundle.js
+dev-client:
+	cd web && yarn build
 
-web-serve:
-	cd web && yarn run esbuild --servedir=www
-
-server-watch-serve:
+dev-backend:
 	air
 
-start-dev:
-	make -j 2 web-watch server-watch-serve 
+dev:
+	make -j 2 dev-client dev-backend
+
+
+setup-env-wev:
+	cd web && yarn
+
+seteup-env-backend:
+	go mod tidy

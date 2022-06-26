@@ -14,6 +14,7 @@ func GetUserProfile(c *gin.Context) {
 	accessToken, err := c.Request.Cookie(("access_token"))
 	if err != nil {
 		fmt.Printf("Error getting user profile: %s", err.Error())
+		return
 	}
 
 	response, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + accessToken.Value)
