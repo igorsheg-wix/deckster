@@ -1,9 +1,9 @@
-.PHONY: start-dev esbuild-watch esbuild-serve
+.PHONY: dev dev-backend dev-client
 
-default:  start-dev
+default:  dev
 
 dev-client:
-	cd web && yarn build
+	cd web && yarn dev
 
 dev-backend:
 	air
@@ -11,9 +11,11 @@ dev-backend:
 dev:
 	make -j 2 dev-client dev-backend
 
-
 setup-env-wev:
 	cd web && yarn
 
 seteup-env-backend:
 	go mod tidy
+
+build:
+	 CGO_ENABLED=0 GOOS=linux GOARCH=amd64  go build -o deckster 

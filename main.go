@@ -5,11 +5,13 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/igors-wix/deckster/handlers"
+	"github.com/joho/godotenv"
 )
 
 //go:embed web/www/*
@@ -31,6 +33,13 @@ func EmbedFolder(fsEmbed embed.FS, targetPath string) static.ServeFileSystem {
 	}
 	return embedFileSystem{
 		FileSystem: http.FS(fsys),
+	}
+}
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Some error occured. Err: %s", err)
 	}
 }
 
@@ -68,7 +77,9 @@ func main() {
 	// router.GET("/api/slide", handlers.GetSlide) // TODO:
 	router.GET("/api/me", handlers.GetUserProfile)
 
-	if err := router.Run("127.0.0.1:5050"); err != nil {
+	serverAddr := os.Getenv("BACKEND_ADDRESS") + ":" + os.Getenv("BACKEND_PORT")
+
+	if err := router.Run(serverAddr); err != nil {
 		log.Fatal(err)
 	}
 
