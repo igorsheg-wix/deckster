@@ -4,6 +4,8 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -11,6 +13,7 @@ import (
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/igors-wix/deckster/structs"
 	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -70,7 +73,6 @@ func LoginHandler(c *gin.Context) {
 }
 
 func AuthHandler(c *gin.Context) {
-	// Handle the exchange code to initiate a transport.
 	session := sessions.Default(c)
 	retrievedState := session.Get("state")
 	queryState := c.Request.URL.Query().Get("state")
@@ -83,6 +85,27 @@ func AuthHandler(c *gin.Context) {
 	tok, err := conf.Exchange(context.Background(), code)
 	if err != nil {
 		log.Println("Login failed. Please try again.")
+		return
+	}
+
+	client := conf.Client(oauth2.NoContext, tok)
+	userinfo, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+	defer userinfo.Body.Close()
+	data, _ := ioutil.ReadAll(userinfo.Body)
+	u := structs.User{}
+	if err = json.Unmarshal(data, &u); err != nil {
+		log.Println(err)
+		return
+	}
+	session.Set("user-id", u.Email)
+	err = session.Save()
+	if err != nil {
+		log.Println(err)
 		return
 	}
 

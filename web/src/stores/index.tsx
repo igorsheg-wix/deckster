@@ -1,6 +1,7 @@
 import produce from 'immer'
 import type { Slide } from 'types'
 import create from 'zustand'
+import type { Descendant } from 'slate'
 
 interface GoogleUserInfo {
   id: string
@@ -11,7 +12,7 @@ interface GoogleUserInfo {
 export interface DecksterStore {
   userInfo: GoogleUserInfo | null
   accessToken: string | undefined
-  editorRawContent: string
+  editorRawContent: Descendant[]
   cursorOnSlide: number
   slides: Slide[]
   set: (fn: (draft: DecksterStore, args: any) => void) => void
@@ -20,7 +21,7 @@ export interface DecksterStore {
 const useDecksterStore = create<DecksterStore>((set) => ({
   userInfo: null,
   accessToken: undefined,
-  editorRawContent: '',
+  editorRawContent: [],
   slides: [],
   cursorOnSlide: 0,
   //@ts-ignore

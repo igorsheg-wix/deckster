@@ -1,4 +1,4 @@
-import { Editor } from 'components/Editor'
+import { DecksterEditor } from 'components/Editor'
 import Flex from 'components/Flex'
 import Navigation from 'components/Navigation/Navigation'
 import { Viewer } from 'components/Viewer'
@@ -10,7 +10,7 @@ const Deckster: FC = () => {
     <Layout column>
       <Navigation />
       <Wrap>
-        <Editor />
+        <DecksterEditor />
         <Viewer />
       </Wrap>
     </Layout>

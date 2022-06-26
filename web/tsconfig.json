@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "incremental": true,
+    "outDir": "www/static",
     "target": "esnext",
     "module": "commonjs",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
@@ -14,6 +15,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": false,
     "baseUrl": "./src",
+    "types": ["esbuild-style-plugin"],
     "plugins": [
       {
         "name": "typescript-styled-plugin"
