@@ -11,6 +11,7 @@ import {
   Text,
   Node,
   Transforms,
+  BaseElement,
 } from 'slate'
 import { withHistory } from 'slate-history'
 import {
@@ -23,17 +24,17 @@ import {
 import useDecksterStore from 'stores'
 import styled from 'styled-components'
 
+// type ListItem = '*' | '-' | "+"
+
+enum DecksterElement {
+  'listItem',
+  'heading-one',
+  'paragraph',
+}
+
 const SHORTCUTS = {
-  '*': 'list-item',
-  '-': 'list-item',
-  '+': 'list-item',
-  '>': 'block-quote',
-  '#': 'heading-one',
-  '##': 'heading-two',
-  '###': 'heading-three',
-  '####': 'heading-four',
-  '#####': 'heading-five',
-  '######': 'heading-six',
+  '-': DecksterElement.listItem,
+  '#': DecksterElement.paragraph,
 }
 
 const DecksterEditor = () => {
@@ -73,7 +74,7 @@ const DecksterEditor = () => {
     []
   )
   const renderElement = useCallback(
-    (props: RenderElementProps) => <Element {...props} />,
+    (props: DecksterEditorElementProps) => <Element {...props} />,
     []
   )
 
@@ -207,7 +208,15 @@ const withShortcuts = (editor: ReactEditor): ReactEditor => {
   return editor
 }
 
-const Element = ({ attributes, children, element }: any) => {
+interface DecksterEditorElement extends BaseElement {
+  type: string
+}
+interface DecksterEditorElementProps extends RenderElementProps {
+  element: DecksterEditorElement
+}
+
+const Element = (props: DecksterEditorElementProps) => {
+  const { attributes, children, element } = props
   switch (element.type) {
     case 'block-quote':
       return <blockquote {...attributes}>{children}</blockquote>
