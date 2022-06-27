@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { marked } from 'marked'
 import { pxToVw, indices } from 'utils/calcs'
@@ -11,40 +11,44 @@ import SlideUtils from 'utils/slide-utils'
 
 const Viewer = () => {
   const ref = React.createRef<HTMLDivElement>()
-  const data = useDecksterStore((s) => s.editorRawContent)
+  const editorNodes = useDecksterStore((s) => s.editorNodes)
   const setDecksterStore = useDecksterStore((s) => s.set)
   const cursorOnSlide = useDecksterStore((s) => s.cursorOnSlide)
   const slides = useDecksterStore((s) => s.slides)
 
-  React.useEffect(() => {
-    if (data && data.length) {
-      const tokens = marked.lexer(data)
-      const hrTokens = indices(
-        tokens.map((t) => t.type),
-        'hr'
-      )
+  // React.useEffect(() => {
+  //   if (data && data.length) {
+  //     const tokens = marked.lexer(data)
+  //     const hrTokens = indices(
+  //       tokens.map((t) => t.type),
+  //       'hr'
+  //     )
 
-      const withFirstSlide = [0, ...hrTokens]
+  //     const withFirstSlide = [0, ...hrTokens]
 
-      const createSlides = withFirstSlide.map((hrt, index) => {
-        const ctxTokens = tokens.slice(hrt, hrTokens[index])
+  //     const createSlides = withFirstSlide.map((hrt, index) => {
+  //       const ctxTokens = tokens.slice(hrt, hrTokens[index])
 
-        return SlideUtils().create({
-          title: `slide${index}`,
-          id: `slide${index}`,
-          tokens: ctxTokens,
-        })
-      })
+  //       return SlideUtils().create({
+  //         title: `slide${index}`,
+  //         id: `slide${index}`,
+  //         tokens: ctxTokens,
+  //       })
+  //     })
 
-      setDecksterStore((s) => {
-        s.slides = createSlides
-      })
-    } else {
-      setDecksterStore((s) => {
-        s.slides = []
-      })
-    }
-  }, [data])
+  //     setDecksterStore((s) => {
+  //       s.slides = createSlides
+  //     })
+  //   } else {
+  //     setDecksterStore((s) => {
+  //       s.slides = []
+  //     })
+  //   }
+  // }, [data])
+
+  useEffect(() => {
+    console.log(editorNodes)
+  }, [editorNodes])
 
   return (
     <Wrap ref={ref}>

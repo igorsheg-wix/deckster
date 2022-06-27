@@ -22,7 +22,7 @@ const CoverTemplate = ({ tokens, slideBackgroundImage }: SlideTemplate) => {
   return (
     <Wrap slideBackgroundImage={slideBackgroundImage}>
       <StyledHeader data-deckster="true">
-        {slideParser.parseInline(headingText)}
+        {/* {slideParser.parseInline(headingText)} */}
       </StyledHeader>
     </Wrap>
   )

@@ -27,12 +27,12 @@ const TitleAndParagraph = ({ tokens }: SlideTemplate) => {
 
   return (
     <Wrap>
-      <h1 data-deckster="true">{slideParser.parseInline(headingText)}</h1>
-      <div
+      {/* <h1 data-deckster="true">{slideParser.parseInline(headingText)}</h1> */}
+      {/* <div
         dangerouslySetInnerHTML={{
           __html: slideParser.parser(getParagraphObject(tokens)),
         }}
-      />
+      /> */}
     </Wrap>
   )
 }
