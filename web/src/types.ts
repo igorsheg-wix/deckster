@@ -41,36 +41,36 @@ export interface SlideElement {
 //   type: string
 // }
 
-export enum EditorElementTypes {
-  '-' = 'list-item',
-  '#' = 'heading',
-  '##' = 'heading',
-  '###' = 'heading',
-  '####' = 'heading',
-  '#####' = 'heading',
-  '######' = 'heading',
-}
+// export enum EditorElementTypes {
+//   '-' = 'list-item',
+//   '#' = 'heading',
+//   '##' = 'heading',
+//   '###' = 'heading',
+//   '####' = 'heading',
+//   '#####' = 'heading',
+//   '######' = 'heading',
+// }
 
-export enum EditorKeys {
-  '-',
-  '#',
-  '##',
-  '###',
-  '####',
-  '#####',
-  '######',
-}
+// export enum EditorKeys {
+//   '-',
+//   '#',
+//   '##',
+//   '###',
+//   '####',
+//   '#####',
+//   '######',
+// }
 
-export interface DecksterEditorElement extends BaseElement {
-  type?: EditorElementTypes
-  level?: number
-}
-export interface DecksterEditorElementProps extends RenderElementProps {
-  element: DecksterEditorElement
-}
+// export interface DecksterEditorElement extends BaseElement {
+//   type?: EditorElementTypes
+//   level?: number
+// }
+// export interface DecksterEditorElementProps extends RenderElementProps {
+//   element: DecksterEditorElement
+// }
 
-export type BulletedListElement = {
-  type: 'bulleted-list'
-  align?: string
-  children: Descendant[]
-}
+// export type BulletedListElement = {
+//   type: 'bulleted-list'
+//   align?: string
+//   children: Descendant[]
+// }

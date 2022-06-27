@@ -8,6 +8,8 @@ import useDecksterStore, { DecksterStore } from 'stores'
 import { templates } from 'templates'
 import { templateEngine } from 'utils/template-engine'
 import SlideUtils from 'utils/slide-utils'
+import { Editor } from 'slate'
+import { ReactEditor, useSlateStatic } from 'slate-react'
 
 const Viewer = () => {
   const ref = React.createRef<HTMLDivElement>()
@@ -45,10 +47,15 @@ const Viewer = () => {
   //     })
   //   }
   // }, [data])
+  // const editor = useSlateStatic()
 
-  useEffect(() => {
-    console.log(editorNodes)
-  }, [editorNodes])
+  // useEffect(() => {
+  //   console.log(editorNodes)
+  //   editorNodes.map((node) => {
+  //     const path = ReactEditor.findPath(editor, node)
+  //     console.log(path)
+  //   })
+  // }, [editorNodes])
 
   return (
     <Wrap ref={ref}>

@@ -1,20 +1,22 @@
 import {
   Editor,
-  Transforms,
+  Element as SlateElement,
   Point,
   Range,
-  Element as SlateElement,
-  BaseElement,
-  NodeMatch,
+  Transforms,
 } from 'slate'
 import { ReactEditor } from 'slate-react'
-import {
-  EditorElementTypes,
-  DecksterEditorElement,
-  BulletedListElement,
-} from 'types'
+import { EditorElementType, EditorKeys, SlateEditor } from './types'
 
-const Shortcuts = (editor: ReactEditor): ReactEditor => {
+const SHORTCUTS = {
+  [EditorKeys['#']]: EditorElementType.h,
+  [EditorKeys['##']]: EditorElementType.h,
+  [EditorKeys['###']]: EditorElementType.h,
+  [EditorKeys['-']]: EditorElementType.li,
+  [EditorKeys['---']]: EditorElementType.hr,
+}
+
+const Shortcuts = (editor: SlateEditor): ReactEditor => {
   const { deleteBackward, insertText } = editor
 
   editor.insertText = (text) => {
@@ -28,19 +30,16 @@ const Shortcuts = (editor: ReactEditor): ReactEditor => {
       const path = block ? block[1] : []
       const start = Editor.start(editor, path)
       const range = { anchor, focus: start }
-      const beforeText = Editor.string(
-        editor,
-        range
-      ) as keyof typeof EditorElementTypes
+      const beforeText = Editor.string(editor, range) as keyof typeof EditorKeys
       console.log('beforeText', beforeText)
 
-      const type = EditorElementTypes[beforeText]
+      const type = SHORTCUTS[beforeText]
       const level = beforeText.length
 
-      if (type) {
+      if (type && type === EditorElementType.h) {
         Transforms.select(editor, range)
         Transforms.delete(editor)
-        const newProperties: Partial<DecksterEditorElement> = {
+        const newProperties: Partial<SlateElement> = {
           type,
           level,
         }
@@ -48,18 +47,19 @@ const Shortcuts = (editor: ReactEditor): ReactEditor => {
           match: (n) => Editor.isBlock(editor, n),
         })
 
-        // if (type === EditorElementTypes['-']) {
-        //   const list: BulletedListElement = {
-        //     type: 'bulleted-list',
-        //     children: [],
-        //   }
-        //   Transforms.wrapNodes(editor, list, {
-        //     match: (n) =>
-        //       !Editor.isEditor(n) &&
-        //       SlateElement.isElement(n) &&
-        //       n.type === 'list-item',
-        //   })
-        // }
+        return
+      }
+
+      if (type) {
+        Transforms.select(editor, range)
+        Transforms.delete(editor)
+        const newProperties: Partial<SlateElement> = {
+          type,
+          level,
+        }
+        Transforms.setNodes<SlateElement>(editor, newProperties, {
+          match: (n) => Editor.isBlock(editor, n),
+        })
 
         return
       }
