@@ -1,139 +1,222 @@
-import React, { useCallback, useEffect, useMemo } from 'react'
-import { createEditor, Descendant, Editor, Path } from 'slate'
-import { withHistory } from 'slate-history'
-import {
-  Editable,
-  ReactEditor,
-  RenderElementProps,
-  RenderLeafProps,
-  Slate,
-  withReact,
-} from 'slate-react'
-import useDecksterStore from 'stores'
-import { DecksterEditorElementProps } from 'types'
+import React, { useState, KeyboardEvent, createRef } from 'react'
 import styles from './Editor.module.scss'
 // import Element from './elements'
-import { EditorElement } from './elements'
-import { Leaf } from './Leaf'
-import Shortcuts from './shortcuts'
-import { EditorElementType } from './types'
 import {
-  Plate,
-  createParagraphPlugin,
+  createAutoformatPlugin,
+  createExitBreakPlugin,
   createHeadingPlugin,
   createHorizontalRulePlugin,
-  createAutoformatPlugin,
+  createParagraphPlugin,
+  createResetNodePlugin,
+  createSoftBreakPlugin,
+  ELEMENT_CODE_BLOCK,
   ELEMENT_HR,
-  AutoformatBlockRule,
-  setNodes,
-  ELEMENT_DEFAULT,
-  insertNodes,
-} from '@udecode/plate'
+  Plate,
+  ELEMENT_PARAGRAPH,
+  createNodeIdPlugin,
+  moveSelection,
+  createTrailingBlockPlugin,
+  usePlateSelectors,
+  createSelectOnBackspacePlugin,
+  createPluginFactory,
+  HotkeyPlugin,
+  onKeyDownToggleElement,
+  KeyboardHandlerReturnType,
+  withTReact,
+  WithPlatePlugin,
+  PlateEditor,
+  Value,
+  HandlerReturnType,
+  onKeyDownCodeBlock,
+  getNodeString,
+} from '@udecode/plate-headless'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
+import { withStyledDraggables } from './config/components/withStyledDraggables'
+import { CONFIG } from './config/config'
+import { createMyPlugins, MyValue } from './config/typescript'
+import BlockMenu from 'components/BlockMenu/BlockMenu'
+import dictionary from 'components/BlockMenu/dictionary'
+import Menu from 'components/BlockMenu/Menu'
+import { withMention } from './withMention'
+import isHotkey from 'is-hotkey'
 
-// const DecksterEditor = () => {
-//   const setEditorRawContent = useDecksterStore((s) => s.set)
+import ReactDOM from 'react-dom'
 
-//   const initialValue: Descendant[] = [
-//     {
-//       type: EditorElementType.p,
-//       children: [{ text: '' }],
-//     },
-//   ]
-
-//   const editor = useMemo(
-//     //@ts-ignore
-//     () => Shortcuts(withHistory(withReact(createEditor()))),
-//     []
-//   )
-//   const renderElement = useCallback(
-//     (props: RenderElementProps) => <EditorElement {...props} />,
-//     []
-//   )
-
-//   const renderLeaf = React.useCallback(
-//     (props: RenderLeafProps) => <Leaf {...props} />,
-//     []
-//   )
-
-//   const onChangeHanlder = (value: Descendant[]) => {
-//     // const yay = ReactEditor.
-//     // console.log('yay', yay)
-
-//     const isAstChange = editor.operations.some(
-//       (op) => 'set_selection' !== op.type
-//     )
-//     if (isAstChange) {
-//       setEditorRawContent((s) => {
-//         s.editorNodes = value
-//       })
-//     }
-//   }
-
-//   // const editor = useSlateStatic()
-
-//   useEffect(() => {
-//     let incides: number[] = []
-//     editor.children.map((node) => {
-//       if (node.type === 'divider') {
-//         const path = ReactEditor.findPath(editor, node)
-//         incides.push(...path)
-//       }
-//       console.log('path', incides)
-//     })
-//   }, [editor.children])
-
-//   return (
-//     <div className={styles.root}>
-//       <Slate onChange={onChangeHanlder} editor={editor} value={initialValue}>
-//         <Editable
-//           renderLeaf={renderLeaf}
-//           renderElement={renderElement}
-//           placeholder="Start wiring your story"
-//         />
-//       </Slate>
-//     </div>
-//   )
-// }
-
-// export { DecksterEditor }
-
-const DecksterEditor = () => {
-  const editableProps = {
-    placeholder: 'Type…',
-    style: {
-      padding: '15px',
-    },
-  }
-
-  const plugins = [
-    // elements
-    createHorizontalRulePlugin(),
-    createParagraphPlugin(), // paragraph element
-    createHeadingPlugin(), // heading elements
-    createAutoformatPlugin({
-      options: {
-        rules: [
-          {
-            mode: 'block',
-            type: ELEMENT_HR,
-            match: ['---', '—-', '___ '],
-            format: (editor) => {
-              setNodes(editor, { type: ELEMENT_HR })
-              insertNodes(editor, {
-                type: ELEMENT_DEFAULT,
-                children: [{ text: '' }],
-              })
-            },
-          },
-        ],
-      },
-    }),
-  ]
+const HrElement = (props: any) => {
+  const { attributes, children, nodeProps } = props
 
   return (
-    <div className={styles.root}>
-      <Plate plugins={plugins} editableProps={editableProps} />
+    <div {...attributes} className={styles['slate-hr']} {...nodeProps}>
+      <hr contentEditable={false} {...nodeProps} />
+      {children}
     </div>
+  )
+}
+const ELEMENT_MENTION_INPUT = 'mention_input'
+const ELEMENT_MENTION = 'mention'
+
+let components = {
+  // [ELEMENT_CODE_BLOCK]: StyledElement,
+  [ELEMENT_HR]: HrElement,
+  // [ELEMENT_MENTION]: () => <div style={{ color: 'blue' }}>asdasd</div>,
+}
+
+components = withStyledDraggables(components)
+
+const DecksterEditor = () => {
+  const { editor } = usePlateSelectors()
+  const editorRef = createRef<HTMLDivElement>()
+  const editableProps = {
+    placeholder: 'Strat typing your story...',
+  }
+
+  // const createMentionPlugin = createPluginFactory({
+  //   key: ELEMENT_MENTION,
+  //   isElement: true,
+  //   isInline: true,
+  //   isVoid: true,
+  //   handlers: {
+  //     onKeyDown: (editor) => moveSelection(editor, { unit: 'offset' }),
+  //   },
+  //   withOverrides: withMention,
+  //   options: {
+  //     trigger: '@',
+  //     createMentionNode: (item) => ({ value: item.text }),
+  //   },
+  //   plugins: [
+  //     {
+  //       key: ELEMENT_MENTION_INPUT,
+  //       isElement: true,
+  //       isInline: true,
+  //     },
+  //   ],
+  //   then: (editor, { key }) => ({
+  //     options: {
+  //       id: key,
+  //     },
+  //   }),
+  // })
+
+  // TODO: move to core
+  type KeyboardEventHandler = (event: KeyboardEvent) => HandlerReturnType
+
+  const mentionOnKeyDownHandler: <V extends Value>() => (
+    editor: PlateEditor<V>
+  ) => KeyboardEventHandler = () => (editor) => (event) => {
+    // return () => true
+    // if (isHotkey('escape', event)) {
+    //   event.preventDefault()
+    //   const currentMentionInput = findMentionInput(editor)!
+    //   if (currentMentionInput) {
+    //     removeMentionInput(editor, currentMentionInput[1])
+    //   }
+    //   return true
+    // }
+    // return moveSelectionByOffset(editor, options)(event)
+  }
+
+  const editorDashMenu = <
+    V extends Value = Value,
+    E extends PlateEditor<V> = PlateEditor<V>
+  >(
+    editor: PlateEditor,
+    { options: { trigger } }
+  ) => {
+    const {
+      apply,
+      insertBreak,
+      insertText: _insertText,
+      deleteBackward,
+      insertFragment: _insertFragment,
+      insertTextData,
+    } = editor
+
+    const stripNewLineAndTrim: (text: string) => string = (text) => {
+      return text
+        .split(/\r\n|\r|\n/)
+        .map((line) => line.trim())
+        .join('')
+    }
+
+    editor.insertText = (text) => {
+      console.log(text)
+
+      if (trigger === text) {
+        setIs(true)
+      }
+      return _insertText(text)
+    }
+
+    editor.deleteBackward = (unit) => {
+      setIs(false)
+
+      deleteBackward(unit)
+    }
+
+    return editor
+  }
+
+  const [is, setIs] = useState(false)
+
+  const createDashMenuPlugin = createPluginFactory({
+    key: 'editor-dash-menu',
+    isElement: true,
+    isInline: true,
+    isVoid: true,
+    withOverrides: editorDashMenu,
+    handlers: {
+      onKeyDown: onKeyDownToggleElement,
+    },
+    options: {
+      trigger: '/',
+    },
+  })
+
+  const plugins = createMyPlugins(
+    [
+      // elements
+      createDashMenuPlugin(),
+      createHorizontalRulePlugin(),
+      createNodeIdPlugin(),
+      // createDndPlugin(),
+      createSoftBreakPlugin(CONFIG.softBreak),
+      createExitBreakPlugin(CONFIG.exitBreak),
+      createParagraphPlugin(), // paragraph element
+      createHeadingPlugin(), // heading elements
+      createResetNodePlugin(),
+      createTrailingBlockPlugin(CONFIG.trailingBlock),
+      createSelectOnBackspacePlugin(CONFIG.selectOnBackspace),
+      //@ts-ignore
+      createAutoformatPlugin(CONFIG.autoformat),
+    ],
+    { components }
+  )
+
+  const handleEditorChange = (value: MyValue) => {
+    console.log(value)
+    // if (isHotkey('mod+s', value)) {
+    // }
+  }
+
+  return (
+    <>
+      <DndProvider backend={HTML5Backend}>
+        <div id="deckster-editor" className={styles.root}>
+          <Plate
+            onChange={handleEditorChange}
+            plugins={plugins}
+            editableProps={editableProps}
+          >
+            {is && <Menu isOpen={is} />}
+          </Plate>
+        </div>
+      </DndProvider>
+      {/* {ReactDOM.createPortal(
+        <Menu editor={editor} isOpen={is} />,
+        document.body
+      )} */}
+    </>
   )
 }
 

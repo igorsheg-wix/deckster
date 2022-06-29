@@ -10,6 +10,7 @@
   flex-direction: row;
   justify-content: flex-start;
   box-shadow: 1px 0 0 #ebebeb;
+  position: relative;
 
   [role='textbox'] {
     flex-grow: 1;
@@ -134,5 +135,40 @@
     place-content: center;
     margin: 0 2rem;
     color: #333;
+  }
+
+  .tippy-box[data-theme~='tomato'] {
+    background-color: tomato;
+    color: yellow;
+  }
+}
+
+.drag-button {
+  overflow: hidden;
+  padding: 0;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border-style: none;
+  cursor: pointer;
+  outline: 0;
+  min-width: 18px;
+  min-height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slate-hr {
+  hr {
+    cursor: pointer;
+    // padding-top: 0.25rem;
+    // padding-bottom: 0.25rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-style: none;
+    background-color: rgb(199, 199, 199);
+    max-height: 1px;
+    height: 1px;
+    border-radius: 1px;
   }
 }
