@@ -6,6 +6,7 @@ import type { Descendant } from 'slate'
 interface DashMenuStore {
   isOpen: boolean
   text: string
+  highlightedIndex: number
 }
 interface GoogleUserInfo {
   id: string
@@ -31,6 +32,7 @@ const useDecksterStore = create<DecksterStore>((set) => ({
   dashmenu: {
     isOpen: false,
     text: '',
+    highlightedIndex: 0,
   },
   cursorOnSlide: 0,
   //@ts-ignore

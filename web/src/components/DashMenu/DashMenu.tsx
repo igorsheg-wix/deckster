@@ -1,29 +1,15 @@
-import { useCombobox } from 'downshift'
-import React, { useCallback, useEffect, useState } from 'react'
-import styled from 'styled-components'
 import {
-  getRangeBoundingClientRect,
-  usePopperPosition,
-  virtualReference,
-} from '@udecode/plate-ui-popper'
-import {
-  useEditorState,
-  useEventEditorSelectors,
-  getBlockAbove,
-  withoutNormalizing,
-  isEndPoint,
-  insertText,
-  withoutMergingHistory,
-  deleteText,
-  moveSelection,
-  select,
-  insertNodes,
   focusEditor,
-  setNodes,
+  getBlockAbove,
+  insertNodes,
+  insertText,
+  isEndPoint,
   removeNodes,
+  select,
+  useEditorState,
+  withoutMergingHistory,
+  withoutNormalizing,
 } from '@udecode/plate-core'
-import { BaseRange } from 'slate'
-import useDecksterStore from 'stores'
 import {
   ELEMENT_BLOCKQUOTE,
   ELEMENT_CODE_BLOCK,
@@ -39,8 +25,18 @@ import {
   ELEMENT_TD,
   ELEMENT_TODO_LI,
 } from '@udecode/plate-headless'
-import { ELEMENT_MENTION_INPUT, getTextFromTrigger } from '@udecode/plate'
+import {
+  getRangeBoundingClientRect,
+  usePopperPosition,
+  virtualReference,
+} from '@udecode/plate-ui-popper'
+import { ELEMENT_DASHMENU_INPUT } from 'components/Editor/Editor.types'
+import { useCombobox } from 'downshift'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Range } from 'slate'
+import useDecksterStore from 'stores'
+import styled from 'styled-components'
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
 
 const items = [
   ELEMENT_BLOCKQUOTE,
@@ -60,16 +56,30 @@ const items = [
 
 function Menu() {
   const dashmenu = useDecksterStore((s) => s.dashmenu)
-
   const [inputItems, setInputItems] = useState(items)
   const popperRef = React.useRef<any>(null)
   const editor = useEditorState()
   const { insertText: _insertText } = editor
 
-  const { getLabelProps, getMenuProps, highlightedIndex, getItemProps } =
-    useCombobox({
-      items: inputItems,
-    })
+  const {
+    setHighlightedIndex,
+    getInputProps,
+    getMenuProps,
+    setInputValue,
+    highlightedIndex,
+    getItemProps,
+    getComboboxProps,
+  } = useCombobox({
+    items: inputItems,
+    highlightedIndex: dashmenu.highlightedIndex,
+    onInputValueChange: ({ inputValue }) => {
+      setInputItems(
+        items.filter((item) =>
+          item.toLowerCase().startsWith(inputValue.toLowerCase())
+        )
+      )
+    },
+  })
 
   let targetRange = editor.selection || null
 
@@ -87,14 +97,14 @@ function Menu() {
   })
 
   useEffect(() => {
-    setInputItems(
-      items.filter((item) =>
-        item.toLowerCase().startsWith(dashmenu.text.toLowerCase())
-      )
-    )
+    console.log(dashmenu.highlightedIndex)
+  }, [dashmenu.highlightedIndex])
+
+  useEffect(() => {
+    setInputValue(dashmenu.text.toLowerCase())
   }, [dashmenu.text])
 
-  const onItemClick = (item) => {
+  const onItemClick = (item: string) => {
     const pathAbove = getBlockAbove(editor)?.[1]
     const isBlockEnd =
       editor.selection &&
@@ -118,11 +128,11 @@ function Menu() {
         insertText(editor, ' ')
       }
 
-      select(editor, editor.selection)
+      editor.selection && select(editor, Range.start(editor.selection))
 
       withoutMergingHistory(editor, () =>
         removeNodes(editor, {
-          match: (node) => node.type === ELEMENT_MENTION_INPUT,
+          match: (node) => node.type === ELEMENT_DASHMENU_INPUT,
         })
       )
 
@@ -130,38 +140,8 @@ function Menu() {
         type: item,
         children: [{ text: '' }],
       })
-      // moveSelection(editor)
       focusEditor(editor)
-      // deleteText(editor)
-      // deleteText(editor, { unit: 'word' })
-      // setNodes(editor, { type: item })
     })
-    // select(editor, editor.selection)
-
-    // withoutMergingHistory(editor, () =>
-    //   removeNodes(editor, {
-    //     match: (node) => node.type === item,
-    //   })
-    // )
-
-    // withoutNormalizing(editor, () => {
-    //   // select(editor, range)
-
-    //   if (isBlockEnd) {
-    //     insertText(editor, ' ')
-    //   }
-
-    //   insertNodes(editor, {
-    //     type: item,
-    //     children: [{ text: '' }],
-    //   })
-    // })
-    // moveSelection(editor)
-    // if (isBlockEnd) {
-    //   deleteText(editor)
-    // }
-
-    // editor.deleteBackward('block')
   }
 
   return (
@@ -171,16 +151,22 @@ function Menu() {
       style={popperStyles.popper}
       {...attributes.popper}
     >
+      <div {...getComboboxProps()}>
+        {/* <VisuallyHidden.Root> */}
+        <input {...getInputProps()} />
+        {/* </VisuallyHidden.Root> */}
+      </div>
       <List {...getMenuProps()}>
         {inputItems.map((item, index) => (
           <ListItem
-            style={
-              highlightedIndex === index ? { backgroundColor: '#bde4ff' } : {}
-            }
+            highlightedIndex
             key={`${item}${index}`}
             {...getItemProps({ item, index })}
           >
-            <ListItemButton onClick={() => onItemClick(item)}>
+            <ListItemButton
+              isHighlighted={highlightedIndex === index}
+              onClick={() => onItemClick(item)}
+            >
               {item}
             </ListItemButton>
           </ListItem>
@@ -244,7 +230,7 @@ const ListItem = styled.li`
   margin: 0;
 `
 
-const ListItemButton = styled.button`
+const ListItemButton = styled.button<{ isHighlighted: boolean }>`
   display: flex;
   -moz-box-align: center;
   align-items: center;
@@ -259,7 +245,7 @@ const ListItemButton = styled.button`
   border: medium none;
   opacity: 1;
   color: rgb(0, 0, 0);
-  background: white;
+  background: ${(p) => (p.isHighlighted ? 'red' : 'white')};
   padding: 0px 16px;
   outline: currentcolor none medium;
 `

@@ -1,24 +1,30 @@
 import {
-  createBasicElementsPlugin,
+  createAutoformatPlugin,
   createBlockquotePlugin,
   createBoldPlugin,
   createCodeBlockPlugin,
   createCodePlugin,
+  createDndPlugin,
+  createExitBreakPlugin,
   createHeadingPlugin,
-  createImagePlugin,
+  createHorizontalRulePlugin,
   createItalicPlugin,
+  createNodeIdPlugin,
   createParagraphPlugin,
   createPlateUI,
+  createResetNodePlugin,
   createSelectOnBackspacePlugin,
+  createSoftBreakPlugin,
   createStrikethroughPlugin,
   createSubscriptPlugin,
   createSuperscriptPlugin,
+  createTrailingBlockPlugin,
   createUnderlinePlugin,
-  findEventRange,
 } from '@udecode/plate'
-import { createStore } from '@udecode/zustood'
+import { createDashMenuPlugin } from 'components/DashMenu'
+import { createMyPlugins } from '../Editor.types'
+import { components } from './components'
 import { CONFIG } from './config'
-import { createMyPlugins, MyPlatePlugin } from './typescript'
 
 const basicElements = createMyPlugins(
   [
@@ -26,9 +32,10 @@ const basicElements = createMyPlugins(
     createCodeBlockPlugin(),
     createHeadingPlugin(),
     createParagraphPlugin(),
+    createHorizontalRulePlugin(),
   ],
   {
-    components: createPlateUI(),
+    components,
   }
 )
 
@@ -47,60 +54,24 @@ const basicMarks = createMyPlugins(
   }
 )
 
+const logic = createMyPlugins(
+  [
+    //@ts-ignore
+    createAutoformatPlugin(CONFIG.autoformat),
+    createDashMenuPlugin(),
+    createNodeIdPlugin(),
+    createDndPlugin(),
+    createSoftBreakPlugin(CONFIG.softBreak),
+    createExitBreakPlugin(CONFIG.exitBreak),
+    createResetNodePlugin(),
+    createTrailingBlockPlugin(CONFIG.trailingBlock),
+    createSelectOnBackspacePlugin(CONFIG.selectOnBackspace),
+  ],
+  { components }
+)
+
 export const PLUGINS = {
   basicElements,
   basicMarks,
-  basicNodes: createMyPlugins([...basicElements, ...basicMarks], {
-    components: createPlateUI(),
-  }),
-  image: createMyPlugins(
-    [
-      createBasicElementsPlugin(),
-      ...basicMarks,
-      createImagePlugin(),
-      createSelectOnBackspacePlugin(CONFIG.selectOnBackspace),
-    ],
-    {
-      components: createPlateUI(),
-    }
-  ),
+  logic,
 }
-
-export const cursorStore = createStore('cursor')({
-  cursors: {},
-})
-
-export const createDragOverCursorPlugin = (): MyPlatePlugin => ({
-  key: 'drag-over-cursor',
-  handlers: {
-    onDragOver: (editor) => (event) => {
-      if (editor.isDragging) return
-
-      const range = findEventRange(editor, event)
-      if (!range) return
-
-      cursorStore.set.cursors({
-        drag: {
-          key: 'drag',
-          data: {
-            style: {
-              backgroundColor: '#fc00ff',
-              backgroundImage: 'linear-gradient(0deg, #fc00ff, #00dbde)',
-              width: 3,
-            },
-          },
-          selection: range,
-        },
-      })
-    },
-    onDragLeave: () => () => {
-      cursorStore.set.cursors({})
-    },
-    onDragEnd: () => () => {
-      cursorStore.set.cursors({})
-    },
-    onDrop: () => () => {
-      cursorStore.set.cursors({})
-    },
-  },
-})

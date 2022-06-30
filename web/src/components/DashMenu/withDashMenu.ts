@@ -13,19 +13,18 @@ import {
   TNode,
   TText,
   Value,
-  getPlateActions,
   WithPlatePlugin,
 } from '@udecode/plate-core'
+import { ELEMENT_DASHMENU_INPUT } from 'components/Editor/Editor.types'
 import { Range } from 'slate'
-import { removeMentionInput } from './transforms/removeMentionInput'
-import { ELEMENT_MENTION_INPUT } from './createMentionPlugin'
+import useDecksterStore from 'stores'
 import {
   findMentionInput,
   isNodeMentionInput,
   isSelectionInMentionInput,
 } from './queries'
+import { removeMentionInput } from './transforms/removeMentionInput'
 import { MentionPlugin, TMentionInputElement } from './types'
-import useDecksterStore from 'stores'
 
 export const withMention = <
   V extends Value = Value,
@@ -36,7 +35,7 @@ export const withMention = <
     options: { id, trigger, inputCreation },
   }: WithPlatePlugin<MentionPlugin, V, E>
 ) => {
-  const { type } = getPlugin<{}, V>(editor, ELEMENT_MENTION_INPUT)
+  const { type } = getPlugin<{}, V>(editor, ELEMENT_DASHMENU_INPUT)
   // const dashmenu = useDecksterStore((s) => s.dashmenu)
   // const set = useDecksterStore((s) => s.set)
 
@@ -222,7 +221,6 @@ export const withMention = <
         // })
         // console.log(editor)
         const dashMenu = useDecksterStore.getState().dashmenu
-
         useDecksterStore.setState({ dashmenu: { ...dashMenu, isOpen: true } })
       }
     } else if (
@@ -233,7 +231,9 @@ export const withMention = <
         return
       }
 
-      useDecksterStore.setState({ dashmenu: { text: '', isOpen: false } })
+      useDecksterStore.setState({
+        dashmenu: { text: '', isOpen: false, highlightedIndex: 0 },
+      })
 
       comboboxActions.reset()
     }

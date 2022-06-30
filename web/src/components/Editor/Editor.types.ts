@@ -1,4 +1,9 @@
+import { HTMLAttributes } from 'react'
 import {
+  EElement,
+  PlateRenderElementProps,
+  TElement,
+  Value,
   AutoformatRule,
   createPlateEditor,
   CreatePlateEditorOptions,
@@ -9,7 +14,6 @@ import {
   DecorateEntry,
   DOMHandler,
   EDescendant,
-  EElement,
   EElementEntry,
   EElementOrText,
   ELEMENT_BLOCKQUOTE,
@@ -55,7 +59,6 @@ import {
   PlateProps,
   PluginOptions,
   SerializeHtml,
-  TElement,
   TImageElement,
   TLinkElement,
   TMediaEmbedElement,
@@ -355,3 +358,13 @@ export const createMyPlugins = (
 ) => createPlugins<MyValue, MyEditor>(plugins, options)
 
 export type MyAutoformatRule = AutoformatRule<MyValue, MyEditor>
+
+// --------------------
+
+export type ElementProps<
+  V extends Value = Value,
+  N extends TElement = EElement<V>
+> = PlateRenderElementProps<V, N> & HTMLAttributes<HTMLElement>
+
+export const ELEMENT_DASHMENU = 'dash_menu'
+export const ELEMENT_DASHMENU_INPUT = 'dash_menu_input'

@@ -1,17 +1,18 @@
 import { createPluginFactory } from '@udecode/plate-core'
+import {
+  ELEMENT_DASHMENU,
+  ELEMENT_DASHMENU_INPUT,
+} from 'components/Editor/Editor.types'
 import { mentionOnKeyDownHandler } from './handlers/mentionOnKeyDownHandler'
 import { isSelectionInMentionInput } from './queries'
 import { MentionPlugin } from './types'
-import { withMention } from './withMention'
-
-export const ELEMENT_MENTION = 'mention'
-export const ELEMENT_MENTION_INPUT = 'mention_input'
+import { withMention } from './withDashMenu'
 
 /**
  * Enables support for autocompleting @mentions.
  */
-export const createMentionPlugin = createPluginFactory<MentionPlugin>({
-  key: ELEMENT_MENTION,
+export const createDashMenuPlugin = createPluginFactory<MentionPlugin>({
+  key: ELEMENT_DASHMENU,
   isElement: true,
   isInline: true,
   isVoid: true,
@@ -25,7 +26,7 @@ export const createMentionPlugin = createPluginFactory<MentionPlugin>({
   },
   plugins: [
     {
-      key: ELEMENT_MENTION_INPUT,
+      key: ELEMENT_DASHMENU_INPUT,
       isElement: true,
       isInline: true,
     },

@@ -27,7 +27,11 @@ import {
   TrailingBlockPlugin,
 } from '@udecode/plate'
 import { autoformatRules } from './autoformat/autoformatRules'
-import { MyEditor, MyPlatePlugin, MyValue } from './typescript'
+import type {
+  MyEditor,
+  MyPlatePlugin,
+  MyValue,
+} from 'components/Editor/Editor.types'
 
 const resetBlockTypesCommonRule = {
   types: [ELEMENT_BLOCKQUOTE, ELEMENT_TODO_LI],
