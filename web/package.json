@@ -27,6 +27,7 @@
     "lodash-es": "^4.17.21",
     "markdown-it": "^13.0.1",
     "marked": "^4.0.17",
+    "million": "^1.11.4",
     "nanoid": "^4.0.0",
     "outline-icons": "^1.43.1",
     "prosemirror-utils": "^0.9.6",

@@ -1,4 +1,4 @@
-import { comboboxActions } from '@udecode/plate-combobox';
+import { comboboxActions } from '@udecode/plate-combobox'
 import {
   getEditorString,
   getNodeString,
@@ -13,17 +13,19 @@ import {
   TNode,
   TText,
   Value,
+  getPlateActions,
   WithPlatePlugin,
-} from '@udecode/plate-core';
-import { Range } from 'slate';
-import { removeMentionInput } from './transforms/removeMentionInput';
-import { ELEMENT_MENTION_INPUT } from './createMentionPlugin';
+} from '@udecode/plate-core'
+import { Range } from 'slate'
+import { removeMentionInput } from './transforms/removeMentionInput'
+import { ELEMENT_MENTION_INPUT } from './createMentionPlugin'
 import {
   findMentionInput,
   isNodeMentionInput,
   isSelectionInMentionInput,
-} from './queries';
-import { MentionPlugin, TMentionInputElement } from './types';
+} from './queries'
+import { MentionPlugin, TMentionInputElement } from './types'
+import useDecksterStore from 'stores'
 
 export const withMention = <
   V extends Value = Value,
@@ -34,7 +36,9 @@ export const withMention = <
     options: { id, trigger, inputCreation },
   }: WithPlatePlugin<MentionPlugin, V, E>
 ) => {
-  const { type } = getPlugin<{}, V>(editor, ELEMENT_MENTION_INPUT);
+  const { type } = getPlugin<{}, V>(editor, ELEMENT_MENTION_INPUT)
+  // const dashmenu = useDecksterStore((s) => s.dashmenu)
+  // const set = useDecksterStore((s) => s.set)
 
   const {
     apply,
@@ -43,59 +47,59 @@ export const withMention = <
     deleteBackward,
     insertFragment: _insertFragment,
     insertTextData,
-  } = editor;
+  } = editor
 
   const stripNewLineAndTrim: (text: string) => string = (text) => {
     return text
       .split(/\r\n|\r|\n/)
       .map((line) => line.trim())
-      .join('');
-  };
+      .join('')
+  }
 
   editor.insertFragment = (fragment) => {
-    const inMentionInput = findMentionInput(editor) !== undefined;
+    const inMentionInput = findMentionInput(editor) !== undefined
     if (!inMentionInput) {
-      return _insertFragment(fragment);
+      return _insertFragment(fragment)
     }
 
     return insertText(
       editor,
       fragment.map((node) => stripNewLineAndTrim(getNodeString(node))).join('')
-    );
-  };
+    )
+  }
 
   editor.insertTextData = (data) => {
-    const inMentionInput = findMentionInput(editor) !== undefined;
+    const inMentionInput = findMentionInput(editor) !== undefined
     if (!inMentionInput) {
-      return insertTextData(data);
+      return insertTextData(data)
     }
 
-    const text = data.getData('text/plain');
+    const text = data.getData('text/plain')
     if (!text) {
-      return false;
+      return false
     }
 
-    editor.insertText(stripNewLineAndTrim(text));
+    // editor.insertText(stripNewLineAndTrim(text))
 
-    return true;
-  };
+    return true
+  }
 
   editor.deleteBackward = (unit) => {
-    const currentMentionInput = findMentionInput(editor);
+    const currentMentionInput = findMentionInput(editor)
     if (currentMentionInput && getNodeString(currentMentionInput[0]) === '') {
-      return removeMentionInput(editor, currentMentionInput[1]);
+      return removeMentionInput(editor, currentMentionInput[1])
     }
 
-    deleteBackward(unit);
-  };
+    deleteBackward(unit)
+  }
 
   editor.insertBreak = () => {
     if (isSelectionInMentionInput(editor)) {
-      return;
+      return
     }
 
-    insertBreak();
-  };
+    insertBreak()
+  }
 
   editor.insertText = (text) => {
     if (
@@ -103,7 +107,7 @@ export const withMention = <
       text !== trigger ||
       isSelectionInMentionInput(editor)
     ) {
-      return _insertText(text);
+      return _insertText(text)
     }
 
     // Make sure a mention input is created at the beginning of line or after a whitespace
@@ -114,7 +118,7 @@ export const withMention = <
         editor.selection,
         getPointBefore(editor, editor.selection)
       )
-    );
+    )
 
     const nextChar = getEditorString(
       editor,
@@ -123,12 +127,12 @@ export const withMention = <
         editor.selection,
         getPointAfter(editor, editor.selection)
       )
-    );
+    )
 
-    const beginningOfLine = previousChar === '';
-    const endOfLine = nextChar === '';
-    const precededByWhitespace = previousChar === ' ';
-    const followedByWhitespace = nextChar === ' ';
+    const beginningOfLine = previousChar === ''
+    const endOfLine = nextChar === ''
+    const precededByWhitespace = previousChar === ' '
+    const followedByWhitespace = nextChar === ' '
 
     if (
       (beginningOfLine || precededByWhitespace) &&
@@ -138,51 +142,59 @@ export const withMention = <
         type,
         children: [{ text: '' }],
         trigger,
-      };
-      if (inputCreation) {
-        data[inputCreation.key] = inputCreation.value;
       }
-      return insertNodes<TMentionInputElement>(editor, data);
+      if (inputCreation) {
+        data[inputCreation.key] = inputCreation.value
+      }
+      return insertNodes<TMentionInputElement>(editor, data)
     }
 
-    return _insertText(text);
-  };
+    return _insertText(text)
+  }
 
   editor.apply = (operation) => {
-    apply(operation);
+    apply(operation)
 
     if (operation.type === 'insert_text' || operation.type === 'remove_text') {
-      const currentMentionInput = findMentionInput(editor);
+      const currentMentionInput = findMentionInput(editor)
       if (currentMentionInput) {
-        comboboxActions.text(getNodeString(currentMentionInput[0]));
+        comboboxActions.text(getNodeString(currentMentionInput[0]))
+        const dashMenu = useDecksterStore.getState().dashmenu
+
+        useDecksterStore.setState({
+          dashmenu: {
+            ...dashMenu,
+            text: getNodeString(currentMentionInput[0]),
+          },
+        })
       }
     } else if (operation.type === 'set_selection') {
       const previousMentionInputPath = Range.isRange(operation.properties)
         ? findMentionInput(editor, { at: operation.properties })?.[1]
-        : undefined;
+        : undefined
 
       const currentMentionInputPath = Range.isRange(operation.newProperties)
         ? findMentionInput(editor, { at: operation.newProperties })?.[1]
-        : undefined;
+        : undefined
 
       if (previousMentionInputPath && !currentMentionInputPath) {
-        removeMentionInput(editor, previousMentionInputPath);
+        removeMentionInput(editor, previousMentionInputPath)
       }
 
       if (currentMentionInputPath) {
-        comboboxActions.targetRange(editor.selection);
+        comboboxActions.targetRange(editor.selection)
       }
     } else if (
       operation.type === 'insert_node' &&
       isNodeMentionInput(editor, operation.node as TNode)
     ) {
       if ((operation.node as TMentionInputElement).trigger !== trigger) {
-        return;
+        return
       }
 
       const text =
         ((operation.node as TMentionInputElement).children as TText[])[0]
-          ?.text ?? '';
+          ?.text ?? ''
 
       if (
         inputCreation === undefined ||
@@ -194,25 +206,38 @@ export const withMention = <
         setSelection(editor, {
           anchor: { path: operation.path.concat([0]), offset: text.length },
           focus: { path: operation.path.concat([0]), offset: text.length },
-        });
+        })
 
-        comboboxActions.open({
-          activeId: id!,
-          text,
-          targetRange: editor.selection,
-        });
+        // comboboxActions.open({
+        //   activeId: id!,
+        //   text,
+        //   targetRange: editor.selection,
+        // })
+
+        // set((s) => {
+        //   s.dashmenu = { ...s.dashmenu, isOpen: true }
+        // })
+        // getPlateActions().state((s) => {
+        //   s.wow = 'asd'
+        // })
+        // console.log(editor)
+        const dashMenu = useDecksterStore.getState().dashmenu
+
+        useDecksterStore.setState({ dashmenu: { ...dashMenu, isOpen: true } })
       }
     } else if (
       operation.type === 'remove_node' &&
       isNodeMentionInput(editor, operation.node as TNode)
     ) {
       if ((operation.node as TMentionInputElement).trigger !== trigger) {
-        return;
+        return
       }
 
-      comboboxActions.reset();
-    }
-  };
+      useDecksterStore.setState({ dashmenu: { text: '', isOpen: false } })
 
-  return editor;
-};
+      comboboxActions.reset()
+    }
+  }
+
+  return editor
+}

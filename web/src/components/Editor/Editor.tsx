@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState } from 'react'
+import React, { createRef, useState } from 'react'
 import styles from './Editor.module.scss'
 // import Element from './elements'
 import {
@@ -12,19 +12,20 @@ import {
   createSelectOnBackspacePlugin,
   createSoftBreakPlugin,
   createTrailingBlockPlugin,
+  ELEMENT_H1,
   ELEMENT_HR,
   Plate,
-  usePlateSelectors,
-} from '@udecode/plate-headless'
-import Menu from 'components/BlockMenu/Menu'
+} from '@udecode/plate'
+import Menu from 'components/DashMenu/Menu'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import { createMentionPlugin } from '../DashMenu/createMentionPlugin'
 import { withStyledDraggables } from './config/components/withStyledDraggables'
 import { CONFIG } from './config/config'
 import { createMyPlugins, MyValue } from './config/typescript'
-import { createMentionPlugin } from '../DashMenu/createMentionPlugin'
 
-import ReactDOM from 'react-dom'
+import styled from 'styled-components'
+import { withStyledPlaceHolders } from './config/components/withStyledPlaceHolders'
 
 const HrElement = (props: any) => {
   const { attributes, children, nodeProps } = props
@@ -37,23 +38,44 @@ const HrElement = (props: any) => {
   )
 }
 const ELEMENT_MENTION_INPUT = 'mention_input'
-const ELEMENT_MENTION = 'mention'
 
 let components = {
-  // [ELEMENT_CODE_BLOCK]: StyledElement,
-  [ELEMENT_HR]: HrElement,
-  [ELEMENT_MENTION_INPUT]: ({ attributes, children, nodeProps }) => (
-    <span style={{ color: 'red' }} {...attributes} {...nodeProps}>
+  [ELEMENT_H1]: ({ attributes, children, nodeProps }) => (
+    <h1 style={{ color: 'blue' }} {...attributes} {...nodeProps}>
       {children}
-    </span>
+    </h1>
   ),
+  [ELEMENT_HR]: HrElement,
+  [ELEMENT_MENTION_INPUT]: ({ attributes, children, nodeProps }) => {
+    console.log('attributes', attributes)
+    console.log('nodeProps', nodeProps)
+
+    return (
+      <StyledDashMenu {...attributes} {...nodeProps}>
+        / {children}
+      </StyledDashMenu>
+    )
+  },
   // [ELEMENT_MENTION]: () => <div style={{ color: 'blue' }}>asdasd</div>,
 }
 
-components = withStyledDraggables(components)
+const StyledDashMenu = styled.p`
+  /* ::before {
+    display: block;
+    opacity: 1;
+    content: attr(placeholder);
+    pointer-events: none;
+    height: 0px;
+    color: rgb(177, 190, 204);
+  } */
+`
+
+components = withStyledPlaceHolders(withStyledDraggables(components))
 
 const DecksterEditor = () => {
-  const { editor } = usePlateSelectors()
+  // const { editor, value } = usePlateSelectors()
+
+  // const plateValue = usePlateSelectors().
   const editorContainerRef = createRef<HTMLDivElement>()
   const editableProps = {
     placeholder: 'Strat typing your story...',
@@ -85,9 +107,9 @@ const DecksterEditor = () => {
     // }
   }
 
-  useEffect(() => {
-    console.log(editor)
-  }, [editor.selection])
+  // useEffect(() => {
+  //   console.log(dashmenu)
+  // }, [dashmenu])
 
   const [is, setIs] = useState(false)
 
@@ -104,13 +126,7 @@ const DecksterEditor = () => {
             plugins={plugins}
             editableProps={editableProps}
           >
-            {/* {is && <Menu isOpen={is} />} */}
-
-            {is &&
-              ReactDOM.createPortal(
-                <Menu isOpen={is} />,
-                document.getElementById('deckster-editor')
-              )}
+            <Menu />
           </Plate>
         </div>
       </DndProvider>

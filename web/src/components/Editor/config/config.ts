@@ -27,7 +27,6 @@ import {
   TrailingBlockPlugin,
 } from '@udecode/plate'
 import { autoformatRules } from './autoformat/autoformatRules'
-import { MENTIONABLES } from './mentionables'
 import { MyEditor, MyPlatePlugin, MyValue } from './typescript'
 
 const resetBlockTypesCommonRule = {
@@ -44,7 +43,6 @@ export const CONFIG: {
   forceLayout: Partial<MyPlatePlugin<NormalizeTypesPlugin>>
   indent: Partial<MyPlatePlugin<IndentPlugin>>
   lineHeight: Partial<MyPlatePlugin>
-  mentionItems: any
   resetBlockType: Partial<MyPlatePlugin<ResetNodePlugin>>
   selectOnBackspace: Partial<MyPlatePlugin<SelectOnBackspacePlugin>>
   softBreak: Partial<MyPlatePlugin<SoftBreakPlugin>>
@@ -172,7 +170,6 @@ export const CONFIG: {
       rules: autoformatRules as any,
     },
   },
-  mentionItems: MENTIONABLES,
   forceLayout: {
     options: {
       rules: [{ path: [0], strictType: ELEMENT_H1 }],
