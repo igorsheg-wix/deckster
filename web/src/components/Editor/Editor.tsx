@@ -1,4 +1,4 @@
-import React, { useState, KeyboardEvent, createRef } from 'react'
+import React, { createRef, useEffect, useState } from 'react'
 import styles from './Editor.module.scss'
 // import Element from './elements'
 import {
@@ -6,40 +6,23 @@ import {
   createExitBreakPlugin,
   createHeadingPlugin,
   createHorizontalRulePlugin,
+  createNodeIdPlugin,
   createParagraphPlugin,
   createResetNodePlugin,
+  createSelectOnBackspacePlugin,
   createSoftBreakPlugin,
-  ELEMENT_CODE_BLOCK,
+  createTrailingBlockPlugin,
   ELEMENT_HR,
   Plate,
-  ELEMENT_PARAGRAPH,
-  createNodeIdPlugin,
-  moveSelection,
-  createTrailingBlockPlugin,
   usePlateSelectors,
-  createSelectOnBackspacePlugin,
-  createPluginFactory,
-  HotkeyPlugin,
-  onKeyDownToggleElement,
-  KeyboardHandlerReturnType,
-  withTReact,
-  WithPlatePlugin,
-  PlateEditor,
-  Value,
-  HandlerReturnType,
-  onKeyDownCodeBlock,
-  getNodeString,
 } from '@udecode/plate-headless'
+import Menu from 'components/BlockMenu/Menu'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { withStyledDraggables } from './config/components/withStyledDraggables'
 import { CONFIG } from './config/config'
 import { createMyPlugins, MyValue } from './config/typescript'
-import BlockMenu from 'components/BlockMenu/BlockMenu'
-import dictionary from 'components/BlockMenu/dictionary'
-import Menu from 'components/BlockMenu/Menu'
-import { withMention } from './withMention'
-import isHotkey from 'is-hotkey'
+import { createMentionPlugin } from '../DashMenu/createMentionPlugin'
 
 import ReactDOM from 'react-dom'
 
@@ -59,6 +42,11 @@ const ELEMENT_MENTION = 'mention'
 let components = {
   // [ELEMENT_CODE_BLOCK]: StyledElement,
   [ELEMENT_HR]: HrElement,
+  [ELEMENT_MENTION_INPUT]: ({ attributes, children, nodeProps }) => (
+    <span style={{ color: 'red' }} {...attributes} {...nodeProps}>
+      {children}
+    </span>
+  ),
   // [ELEMENT_MENTION]: () => <div style={{ color: 'blue' }}>asdasd</div>,
 }
 
@@ -66,117 +54,15 @@ components = withStyledDraggables(components)
 
 const DecksterEditor = () => {
   const { editor } = usePlateSelectors()
-  const editorRef = createRef<HTMLDivElement>()
+  const editorContainerRef = createRef<HTMLDivElement>()
   const editableProps = {
     placeholder: 'Strat typing your story...',
   }
 
-  // const createMentionPlugin = createPluginFactory({
-  //   key: ELEMENT_MENTION,
-  //   isElement: true,
-  //   isInline: true,
-  //   isVoid: true,
-  //   handlers: {
-  //     onKeyDown: (editor) => moveSelection(editor, { unit: 'offset' }),
-  //   },
-  //   withOverrides: withMention,
-  //   options: {
-  //     trigger: '@',
-  //     createMentionNode: (item) => ({ value: item.text }),
-  //   },
-  //   plugins: [
-  //     {
-  //       key: ELEMENT_MENTION_INPUT,
-  //       isElement: true,
-  //       isInline: true,
-  //     },
-  //   ],
-  //   then: (editor, { key }) => ({
-  //     options: {
-  //       id: key,
-  //     },
-  //   }),
-  // })
-
-  // TODO: move to core
-  type KeyboardEventHandler = (event: KeyboardEvent) => HandlerReturnType
-
-  const mentionOnKeyDownHandler: <V extends Value>() => (
-    editor: PlateEditor<V>
-  ) => KeyboardEventHandler = () => (editor) => (event) => {
-    // return () => true
-    // if (isHotkey('escape', event)) {
-    //   event.preventDefault()
-    //   const currentMentionInput = findMentionInput(editor)!
-    //   if (currentMentionInput) {
-    //     removeMentionInput(editor, currentMentionInput[1])
-    //   }
-    //   return true
-    // }
-    // return moveSelectionByOffset(editor, options)(event)
-  }
-
-  const editorDashMenu = <
-    V extends Value = Value,
-    E extends PlateEditor<V> = PlateEditor<V>
-  >(
-    editor: PlateEditor,
-    { options: { trigger } }
-  ) => {
-    const {
-      apply,
-      insertBreak,
-      insertText: _insertText,
-      deleteBackward,
-      insertFragment: _insertFragment,
-      insertTextData,
-    } = editor
-
-    const stripNewLineAndTrim: (text: string) => string = (text) => {
-      return text
-        .split(/\r\n|\r|\n/)
-        .map((line) => line.trim())
-        .join('')
-    }
-
-    editor.insertText = (text) => {
-      console.log(text)
-
-      if (trigger === text) {
-        setIs(true)
-      }
-      return _insertText(text)
-    }
-
-    editor.deleteBackward = (unit) => {
-      setIs(false)
-
-      deleteBackward(unit)
-    }
-
-    return editor
-  }
-
-  const [is, setIs] = useState(false)
-
-  const createDashMenuPlugin = createPluginFactory({
-    key: 'editor-dash-menu',
-    isElement: true,
-    isInline: true,
-    isVoid: true,
-    withOverrides: editorDashMenu,
-    handlers: {
-      onKeyDown: onKeyDownToggleElement,
-    },
-    options: {
-      trigger: '/',
-    },
-  })
-
   const plugins = createMyPlugins(
     [
       // elements
-      createDashMenuPlugin(),
+      createMentionPlugin(),
       createHorizontalRulePlugin(),
       createNodeIdPlugin(),
       // createDndPlugin(),
@@ -199,23 +85,35 @@ const DecksterEditor = () => {
     // }
   }
 
+  useEffect(() => {
+    console.log(editor)
+  }, [editor.selection])
+
+  const [is, setIs] = useState(false)
+
   return (
     <>
       <DndProvider backend={HTML5Backend}>
-        <div id="deckster-editor" className={styles.root}>
+        <div
+          ref={editorContainerRef}
+          id="deckster-editor"
+          className={styles.root}
+        >
           <Plate
             onChange={handleEditorChange}
             plugins={plugins}
             editableProps={editableProps}
           >
-            {is && <Menu isOpen={is} />}
+            {/* {is && <Menu isOpen={is} />} */}
+
+            {is &&
+              ReactDOM.createPortal(
+                <Menu isOpen={is} />,
+                document.getElementById('deckster-editor')
+              )}
           </Plate>
         </div>
       </DndProvider>
-      {/* {ReactDOM.createPortal(
-        <Menu editor={editor} isOpen={is} />,
-        document.body
-      )} */}
     </>
   )
 }
