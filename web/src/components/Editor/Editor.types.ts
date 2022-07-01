@@ -1,4 +1,9 @@
-import { HTMLAttributes } from 'react'
+import {
+  ForwardRefExoticComponent,
+  HTMLAttributes,
+  ReactElement,
+  RefAttributes,
+} from 'react'
 import {
   EElement,
   PlateRenderElementProps,
@@ -77,6 +82,7 @@ import {
   WithOverride,
 } from '@udecode/plate'
 import { CSSProperties } from 'styled-components'
+import { IconProps } from '@radix-ui/react-icons/dist/types'
 
 /**
  * Text
@@ -368,3 +374,12 @@ export type ElementProps<
 
 export const ELEMENT_DASHMENU = 'dash_menu'
 export const ELEMENT_DASHMENU_INPUT = 'dash_menu_input'
+
+export interface MenuItem {
+  key: string
+  lable?: string
+  keywords?: string
+  icon?: ForwardRefExoticComponent<IconProps & RefAttributes<SVGSVGElement>>
+  shortcut?: string
+  attrs?: Record<any, any>
+}

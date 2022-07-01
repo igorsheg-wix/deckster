@@ -5,7 +5,7 @@ import {
   PlatePluginComponent,
   Value,
 } from '@udecode/plate'
-import DashMenu from 'components/DashMenu/DashMenu'
+import DashMenu from './components/DashMenu/DashMenu'
 import React, { createRef } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'

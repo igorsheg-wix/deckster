@@ -21,7 +21,7 @@ import {
   createTrailingBlockPlugin,
   createUnderlinePlugin,
 } from '@udecode/plate'
-import { createDashMenuPlugin } from 'components/DashMenu'
+import { createDashMenuPlugin } from '../components/DashMenu/createMentionPlugin'
 import { createMyPlugins } from '../Editor.types'
 import { components } from './components'
 import { CONFIG } from './config'

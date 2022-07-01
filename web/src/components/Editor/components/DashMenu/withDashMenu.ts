@@ -36,7 +36,7 @@ export const withMention = <
   }: WithPlatePlugin<MentionPlugin, V, E>
 ) => {
   const { type } = getPlugin<{}, V>(editor, ELEMENT_DASHMENU_INPUT)
-  // const dashmenu = useDecksterStore((s) => s.dashmenu)
+  const dashMenu = useDecksterStore.getState().dashmenu
   // const set = useDecksterStore((s) => s.set)
 
   const {
@@ -157,15 +157,17 @@ export const withMention = <
     if (operation.type === 'insert_text' || operation.type === 'remove_text') {
       const currentMentionInput = findMentionInput(editor)
       if (currentMentionInput) {
-        comboboxActions.text(getNodeString(currentMentionInput[0]))
-        const dashMenu = useDecksterStore.getState().dashmenu
+        // comboboxActions.text(getNodeString(currentMentionInput[0]))
 
-        useDecksterStore.setState({
-          dashmenu: {
-            ...dashMenu,
-            text: getNodeString(currentMentionInput[0]),
-          },
-        })
+        dashMenu.setText(getNodeString(currentMentionInput[0]))
+        // const dashMenu = useDecksterStore.getState().dashmenu
+
+        // useDecksterStore.setState({
+        //   dashmenu: {
+        //     ...dashMenu,
+        //     text: getNodeString(currentMentionInput[0]),
+        //   },
+        // })
       }
     } else if (operation.type === 'set_selection') {
       const previousMentionInputPath = Range.isRange(operation.properties)
@@ -207,21 +209,7 @@ export const withMention = <
           focus: { path: operation.path.concat([0]), offset: text.length },
         })
 
-        // comboboxActions.open({
-        //   activeId: id!,
-        //   text,
-        //   targetRange: editor.selection,
-        // })
-
-        // set((s) => {
-        //   s.dashmenu = { ...s.dashmenu, isOpen: true }
-        // })
-        // getPlateActions().state((s) => {
-        //   s.wow = 'asd'
-        // })
-        // console.log(editor)
-        const dashMenu = useDecksterStore.getState().dashmenu
-        useDecksterStore.setState({ dashmenu: { ...dashMenu, isOpen: true } })
+        dashMenu.open()
       }
     } else if (
       operation.type === 'remove_node' &&
@@ -230,12 +218,19 @@ export const withMention = <
       if ((operation.node as TMentionInputElement).trigger !== trigger) {
         return
       }
+      // const dashMenu = useDecksterStore.getState().dashmenu
 
-      useDecksterStore.setState({
-        dashmenu: { text: '', isOpen: false, highlightedIndex: 0 },
-      })
+      dashMenu.reset()
+      // useDecksterStore.setState({
+      //   dashmenu: {
+      //     text: '',
+      //     isOpen: false,
+      //     highlightedIndex: 0,
+      //     onSelectItem: dashMenu.onSelectItem,
+      //   },
+      // })
 
-      comboboxActions.reset()
+      // comboboxActions.reset()
     }
   }
 
