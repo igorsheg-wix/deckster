@@ -22,6 +22,7 @@ import {
 } from 'components/Editor/Editor.types'
 import { Range } from 'slate'
 import createElementOnSelectItem from 'components/Editor/components/DashMenu/createElementOnSelectItem'
+import blockMenuItems from 'components/Editor/components/DashMenu/menuItems'
 
 const onSelectItem = (editor: PlateEditor, item: string) => {
   const pathAbove = getBlockAbove(editor)?.[1]
@@ -66,13 +67,15 @@ const onSelectItem = (editor: PlateEditor, item: string) => {
 interface DashMenuStore<V extends Value = Value> {
   isOpen: boolean
   text: string
+  filteredItems: MenuItem[] | []
+  setFilteredItems: (items: MenuItem[] | []) => void
   open: () => void
   close: () => void
   reset: () => void
   setText: (text: string) => void
   moveDown: () => void
   moveUp: () => void
-  onYay: () => void
+  highlightIndex: (index: number) => void
   highlightedIndex: number
   onSelectItem: (
     ev:
@@ -99,6 +102,7 @@ export interface DecksterStore {
 }
 
 const dashMenuBaseStore = {
+  filteredItems: blockMenuItems(),
   isOpen: false,
   text: '',
   highlightedIndex: 0,
@@ -116,6 +120,8 @@ const useDecksterStore = create<DecksterStore>((set, get) => ({
     open: () => set({ dashmenu: { ...get().dashmenu, isOpen: true } }),
     close: () => set({ dashmenu: { ...get().dashmenu, isOpen: false } }),
     setText: (text) => set({ dashmenu: { ...get().dashmenu, text } }),
+    setFilteredItems: (filteredItems) =>
+      set({ dashmenu: { ...get().dashmenu, filteredItems } }),
     moveDown: () =>
       set({
         dashmenu: {
@@ -131,6 +137,13 @@ const useDecksterStore = create<DecksterStore>((set, get) => ({
         },
       }),
     reset: () => set({ dashmenu: { ...get().dashmenu, ...dashMenuBaseStore } }),
+    highlightIndex: (index: number) =>
+      set({
+        dashmenu: {
+          ...get().dashmenu,
+          highlightedIndex: index,
+        },
+      }),
   },
   cursorOnSlide: 0,
   //@ts-ignore

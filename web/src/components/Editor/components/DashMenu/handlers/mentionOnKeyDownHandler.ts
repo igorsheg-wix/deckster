@@ -4,6 +4,7 @@ import useDecksterStore from 'stores'
 import blockMenuItems from '../menuItems'
 import { findMentionInput } from '../queries'
 import { removeMentionInput } from '../transforms'
+import { getNextWrappingIndex } from '../utils'
 import { KeyboardEventHandler } from './KeyboardEventHandler'
 import {
   moveSelectionByOffset,
@@ -16,35 +17,60 @@ export const mentionOnKeyDownHandler: <V extends Value>(
   (options) => (editor) => (event) => {
     const currentMentionInput = findMentionInput(editor)!
     const dashMenu = useDecksterStore.getState().dashmenu
+    const dashMenuDomElement = document.getElementById('dashmenu-list')
 
-    if (isHotkey('escape', event)) {
-      event.preventDefault()
-      if (currentMentionInput) {
-        removeMentionInput(editor, currentMentionInput[1])
-      }
-      return true
-    }
+    // if (isHotkey('escape', event)) {
+    //   event.preventDefault()
+    //   if (currentMentionInput) {
+    //     removeMentionInput(editor, currentMentionInput[1])
+    //   }
+    //   return true
+    // }
 
     if (isHotkey('down', event) && currentMentionInput) {
       event.preventDefault()
-      dashMenu.moveDown()
+
+      const newIndex = getNextWrappingIndex(
+        1,
+        dashMenu.highlightedIndex,
+        dashMenu.filteredItems.length,
+        (index: number) => dashMenuDomElement?.childNodes[index],
+        true
+      )
+      dashMenu.highlightIndex(newIndex)
+      return
     }
 
     if (isHotkey('up', event)) {
       event.preventDefault()
-      dashMenu.moveUp()
+
+      const newIndex = getNextWrappingIndex(
+        -1,
+        dashMenu.highlightedIndex,
+        dashMenu.filteredItems.length,
+        (index: number) => dashMenuDomElement?.childNodes[index],
+        true
+      )
+      dashMenu.highlightIndex(newIndex)
     }
 
-    if (isHotkey('enter', event) && currentMentionInput) {
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      dashMenu.reset()
+      removeMentionInput(editor, currentMentionInput[1])
+      return true
+    }
+
+    if (['Tab', 'Enter'].includes(event.key) && currentMentionInput) {
       event.preventDefault()
       event.stopPropagation()
 
-      const dashMenu = useDecksterStore.getState().dashmenu
-      const menuItems = blockMenuItems()
-      const ctxMenuItem = menuItems[dashMenu.highlightedIndex]
-
-      dashMenu.onSelectItem(event, editor, ctxMenuItem)
-      // return true
+      dashMenu.onSelectItem(
+        event,
+        //@ts-ignore
+        editor,
+        dashMenu.filteredItems[dashMenu.highlightedIndex]
+      )
     }
 
     return moveSelectionByOffset(editor, options)(event)

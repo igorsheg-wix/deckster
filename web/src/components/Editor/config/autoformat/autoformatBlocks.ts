@@ -14,7 +14,10 @@ import {
   insertNodes,
   setNodes,
 } from '@udecode/plate'
-import { MyAutoformatRule } from '../typescript'
+import {
+  ELEMENT_DASHMENU_INPUT,
+  MyAutoformatRule,
+} from 'components/Editor/Editor.types'
 import { preFormat } from './autoformatUtils'
 
 export const autoformatBlocks: MyAutoformatRule[] = [

@@ -8,7 +8,7 @@ import {
   toggleList,
   unwrapList,
 } from '@udecode/plate'
-import { MyEditor, MyValue } from '../typescript'
+import { MyValue, MyEditor } from 'components/Editor/Editor.types'
 
 export const preFormat: AutoformatBlockRule<MyValue, MyEditor>['preFormat'] = (
   editor

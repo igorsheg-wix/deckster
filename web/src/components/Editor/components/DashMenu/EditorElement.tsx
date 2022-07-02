@@ -10,8 +10,8 @@ export const DashMenuElement = <V extends Value>(
   const { attributes, children, nodeProps } = props
 
   return (
-    <div {...attributes} {...nodeProps}>
+    <span style={{ color: 'red' }} {...attributes} {...nodeProps}>
       / {children}
-    </div>
+    </span>
   )
 }

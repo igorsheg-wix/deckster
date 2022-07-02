@@ -9,6 +9,7 @@ import {
   insertNodes,
   insertText,
   PlateEditor,
+  removeNodes,
   setSelection,
   TNode,
   TText,
@@ -145,6 +146,7 @@ export const withMention = <
       if (inputCreation) {
         data[inputCreation.key] = inputCreation.value
       }
+      // removeNodes(editor)
       return insertNodes<TMentionInputElement>(editor, data)
     }
 
@@ -157,17 +159,7 @@ export const withMention = <
     if (operation.type === 'insert_text' || operation.type === 'remove_text') {
       const currentMentionInput = findMentionInput(editor)
       if (currentMentionInput) {
-        // comboboxActions.text(getNodeString(currentMentionInput[0]))
-
         dashMenu.setText(getNodeString(currentMentionInput[0]))
-        // const dashMenu = useDecksterStore.getState().dashmenu
-
-        // useDecksterStore.setState({
-        //   dashmenu: {
-        //     ...dashMenu,
-        //     text: getNodeString(currentMentionInput[0]),
-        //   },
-        // })
       }
     } else if (operation.type === 'set_selection') {
       const previousMentionInputPath = Range.isRange(operation.properties)
@@ -218,19 +210,8 @@ export const withMention = <
       if ((operation.node as TMentionInputElement).trigger !== trigger) {
         return
       }
-      // const dashMenu = useDecksterStore.getState().dashmenu
 
       dashMenu.reset()
-      // useDecksterStore.setState({
-      //   dashmenu: {
-      //     text: '',
-      //     isOpen: false,
-      //     highlightedIndex: 0,
-      //     onSelectItem: dashMenu.onSelectItem,
-      //   },
-      // })
-
-      // comboboxActions.reset()
     }
   }
 

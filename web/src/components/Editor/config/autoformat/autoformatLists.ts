@@ -7,7 +7,7 @@ import {
   setNodes,
   TTodoListItemElement,
 } from '@udecode/plate'
-import { MyAutoformatRule } from '../typescript'
+import { MyAutoformatRule } from 'components/Editor/Editor.types'
 import { formatList, preFormat } from './autoformatUtils'
 
 export const autoformatLists: MyAutoformatRule[] = [
