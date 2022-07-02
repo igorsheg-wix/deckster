@@ -6,34 +6,13 @@ import {
   virtualReference,
 } from '@udecode/plate-ui-popper'
 import { useCombobox } from 'downshift'
-import React, { useCallback, useEffect, useState } from 'react'
+import { matchSorter } from 'match-sorter'
+import React, { useCallback, useEffect } from 'react'
 import useDecksterStore from 'stores'
 import styled from 'styled-components'
 import createElementOnSelectItem from './createElementOnSelectItem'
 import blockMenuItems from './menuItems'
-import { filter } from 'lodash-es'
-import { matchSorter } from 'match-sorter'
-
-function fuzzySearchMultipleWords(
-  rows, // array of data [{a: "a", b: "b"}, {a: "c", b: "d"}]
-  keys, // keys to search ["a", "b"]
-  filterValue: string // potentially multi-word search string "two words"
-) {
-  if (!filterValue || !filterValue.length) {
-    return rows
-  }
-
-  const terms = filterValue.split(' ')
-  if (!terms) {
-    return rows
-  }
-
-  // reduceRight will mean sorting is done by score for the _first_ entered word.
-  return terms.reduceRight(
-    (results, term) => matchSorter(results, term, { keys }),
-    rows
-  )
-}
+import filterExcessSeparators from './utils/filterExcessSeparators'
 
 function Menu() {
   const dashmenu = useDecksterStore((s) => s.dashmenu)
@@ -70,20 +49,25 @@ function Menu() {
     offset: [0, 4],
   })
 
-  useEffect(() => {
-    if (!dashmenu.text.length) {
-      return
-      // console.log(dashmenu.text)
-      // setInputItems(blockMenuItems())
+  const filtered = blockMenuItems().filter((item) => {
+    if (item.key === 'separator') {
+      return true
     }
-    // let filteredItems = matchSorter(blockMenuItems(), dashmenu.text, {
-    //   keys: ['keywords', "key"],
-    // })
-    let filteredItems = fuzzySearchMultipleWords(
-      blockMenuItems(),
-      ['key', 'keywords'],
-      `separator  ${dashmenu.text}`
+
+    const n = dashmenu.text.toLowerCase()
+
+    return (
+      (item.lable || '').toLowerCase().includes(n) ||
+      (item.keywords || '').toLowerCase().includes(n)
     )
+  })
+
+  useEffect(() => {
+    let filteredItems
+    if (!dashmenu.text) {
+      filteredItems = blockMenuItems()
+    }
+    filteredItems = filterExcessSeparators(filtered)
 
     dashmenu.setFilteredItems(filteredItems)
   }, [dashmenu.text])
@@ -106,26 +90,51 @@ function Menu() {
             highlightedIndex
             key={`${item.key}${index}`}
             {...getItemProps({ item, index })}
-            // data-dashmenu-item-disabled={item.key === 'separator'}
+            onPointerMove={() => dashmenu.highlightIndex(index)}
+            onPointerDown={(ev) => createElementOnSelectItem(ev, editor, item)}
             disabled={item.key === 'separator'}
           >
-            <ListItemButton
-              disabled={item.key === 'separator'}
-              isHighlighted={highlightedIndex === index}
-              onClick={(ev) => createElementOnSelectItem(ev, editor, item)}
-            >
-              {item.lable}
-            </ListItemButton>
+            {item.key === 'separator' ? (
+              <Hr />
+            ) : (
+              <ListItemButton
+                disabled={item.key === 'separator'}
+                isHighlighted={highlightedIndex === index}
+              >
+                <>
+                  {item.icon && React.createElement(item.icon)}
+                  {item.lable}
+                </>
+              </ListItemButton>
+            )}
           </ListItem>
         ))}
+        {dashmenu.filteredItems.length === 0 && (
+          <ListItem>
+            <Empty>No results</Empty>
+          </ListItem>
+        )}
       </List>
     </Wrapper>
   )
 }
 
+const Empty = styled.div`
+  display: flex;
+  align-items: center;
+  color: grey;
+  font-weight: 500;
+  font-size: 14px;
+  height: 36px;
+  padding: 0 16px;
+`
+
 export const Wrapper = styled.div<{
   active: boolean
 }>`
+  color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(33px);
+  background-blend-mode: overlay;
   border-radius: 4px;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px,
     rgba(0, 0, 0, 0.08) 0px 4px 8px, rgba(0, 0, 0, 0.08) 0px 2px 4px;
@@ -147,10 +156,7 @@ export const Wrapper = styled.div<{
   * {
     box-sizing: border-box;
   }
-  hr {
-    border: 0;
-    height: 0;
-  }
+
   ${({ active }) =>
     active &&
     `
@@ -187,13 +193,30 @@ const ListItemButton = styled.button<{ isHighlighted: boolean }>`
   line-height: 1;
   width: 100%;
   height: 36px;
+  background: transparent;
   cursor: pointer;
   border: medium none;
   opacity: 1;
   color: rgb(0, 0, 0);
-  background: ${(p) => (p.isHighlighted ? 'grey' : 'white')};
+  backdrop-filter: ${(p) =>
+    p.isHighlighted ? 'brightness(90%)' : 'brightness(100%)'};
   padding: 0px 16px;
   outline: currentcolor none medium;
+
+  svg {
+    height: 18px;
+    width: 18px;
+    margin: 0 12px 0 0;
+  }
+`
+
+const Hr = styled.hr`
+  border-color: rgb(197, 204, 211) currentcolor currentcolor;
+  border-style: solid none none;
+  border-width: 1px 0px 0px;
+  border-image: none 100% / 1 / 0 stretch;
+  height: 0px;
+  margin: 6px 0;
 `
 
 export default Menu

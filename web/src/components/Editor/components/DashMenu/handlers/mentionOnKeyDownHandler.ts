@@ -1,4 +1,4 @@
-import { PlateEditor, Value } from '@udecode/plate-core'
+import { PlateEditor, Value, focusEditor } from '@udecode/plate-core'
 import isHotkey from 'is-hotkey'
 import useDecksterStore from 'stores'
 import blockMenuItems from '../menuItems'
@@ -19,14 +19,6 @@ export const mentionOnKeyDownHandler: <V extends Value>(
     const dashMenu = useDecksterStore.getState().dashmenu
     const dashMenuDomElement = document.getElementById('dashmenu-list')
 
-    // if (isHotkey('escape', event)) {
-    //   event.preventDefault()
-    //   if (currentMentionInput) {
-    //     removeMentionInput(editor, currentMentionInput[1])
-    //   }
-    //   return true
-    // }
-
     if (isHotkey('down', event) && currentMentionInput) {
       event.preventDefault()
 
@@ -41,7 +33,7 @@ export const mentionOnKeyDownHandler: <V extends Value>(
       return
     }
 
-    if (isHotkey('up', event)) {
+    if (isHotkey('up', event) && currentMentionInput) {
       event.preventDefault()
 
       const newIndex = getNextWrappingIndex(
@@ -54,7 +46,7 @@ export const mentionOnKeyDownHandler: <V extends Value>(
       dashMenu.highlightIndex(newIndex)
     }
 
-    if (event.key === 'Escape') {
+    if (event.key === 'Escape' && currentMentionInput) {
       event.preventDefault()
       dashMenu.reset()
       removeMentionInput(editor, currentMentionInput[1])

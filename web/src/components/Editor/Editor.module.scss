@@ -11,6 +11,8 @@
   justify-content: flex-start;
   box-shadow: 1px 0 0 #ebebeb;
   position: relative;
+  overflow: hidden;
+  overflow-y: auto;
 
   [role='textbox'] {
     flex-grow: 1;

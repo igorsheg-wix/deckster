@@ -25,7 +25,6 @@ import {
   ELEMENT_DASHMENU,
   ELEMENT_DASHMENU_INPUT,
 } from 'components/Editor/Editor.types'
-import { ELEMENT_MENTION_INPUT } from './createMentionPlugin'
 import { MentionPlugin, TMentionElement } from './types'
 
 export interface CreateMentionNode<TData extends Data> {

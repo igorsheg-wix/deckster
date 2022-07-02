@@ -11,7 +11,7 @@ export const HorizontalLineElement = <V extends Value>(
   const { attributes, children, nodeProps } = props
 
   return (
-    <div {...attributes} className={styles.root} {...nodeProps}>
+    <div {...attributes} {...nodeProps} className={styles.root}>
       <hr contentEditable={false} />
       {children}
     </div>

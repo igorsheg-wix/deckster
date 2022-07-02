@@ -8,15 +8,14 @@ import {
   removeNodes,
   setNodes,
   PlateEditor,
+  focusEditor,
 } from '@udecode/plate'
 import { ELEMENT_DASHMENU_INPUT } from 'components/Editor/Editor.types'
 import { MenuItem } from '../../Editor.types'
 import { Range } from 'slate'
 
 const createElementOnSelectItem = (
-  ev:
-    | React.MouseEvent<HTMLButtonElement, MouseEvent>
-    | React.KeyboardEvent<Element>,
+  ev: React.SyntheticEvent,
   editor: PlateEditor,
   item: MenuItem
 ) => {
@@ -45,7 +44,7 @@ const createElementOnSelectItem = (
       type: item.key,
       children: [{ text: '' }],
     })
-    // focusEditor(editor)
+    focusEditor(editor)
   })
 }
 
