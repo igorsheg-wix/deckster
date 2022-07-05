@@ -1,3 +1,4 @@
+import { PlateProvider, withPlateProvider } from '@udecode/plate'
 import { DecksterEditor } from 'components/Editor'
 import Flex from 'components/Flex'
 import Navigation from 'components/Navigation/Navigation'
@@ -11,7 +12,9 @@ const Deckster: FC = () => {
       <Navigation />
       <Wrap>
         <DecksterEditor />
-        <Viewer />
+        <PlateProvider>
+          <Viewer />
+        </PlateProvider>
       </Wrap>
     </Layout>
   )

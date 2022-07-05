@@ -1,6 +1,4 @@
-import { marked } from 'marked'
-import { BaseElement, Descendant } from 'slate'
-import { RenderElementProps } from 'slate-react'
+import { Value } from '@udecode/plate'
 
 export enum Temaplte {
   cover = 'cover',
@@ -14,7 +12,8 @@ export interface Slide {
   width: number
   backgroundImage: string
   elements: SlideElement[] | null
-  tokens: marked.TokensList | marked.Token[]
+  tokens: Value
+
   html: HTMLElement[] | null
 }
 
@@ -36,41 +35,3 @@ export interface SlideElement {
     alignment: any
   }
 }
-
-// interface EditorDecendant extends BaseElement {
-//   type: string
-// }
-
-// export enum EditorElementTypes {
-//   '-' = 'list-item',
-//   '#' = 'heading',
-//   '##' = 'heading',
-//   '###' = 'heading',
-//   '####' = 'heading',
-//   '#####' = 'heading',
-//   '######' = 'heading',
-// }
-
-// export enum EditorKeys {
-//   '-',
-//   '#',
-//   '##',
-//   '###',
-//   '####',
-//   '#####',
-//   '######',
-// }
-
-// export interface DecksterEditorElement extends BaseElement {
-//   type?: EditorElementTypes
-//   level?: number
-// }
-// export interface DecksterEditorElementProps extends RenderElementProps {
-//   element: DecksterEditorElement
-// }
-
-// export type BulletedListElement = {
-//   type: 'bulleted-list'
-//   align?: string
-//   children: Descendant[]
-// }

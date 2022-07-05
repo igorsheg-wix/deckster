@@ -1,28 +1,41 @@
+import {
+  getNodeString,
+  isType,
+  PlateEditor,
+  TElement,
+  usePlateSelectors,
+  Value,
+} from '@udecode/plate'
 import React from 'react'
 import styled from 'styled-components'
 import { Slide } from 'types'
 import { pxToVw } from 'utils/calcs'
 import { marked as slideParser } from 'utils/slide-token-parser'
 
-const getHeadingObject = (
-  tokens: slideParser.TokensList | slideParser.Token[]
-) => {
-  return tokens.find((t) => t.type === 'heading' && t.depth === 1) as
-    | slideParser.Tokens.Heading
-    | undefined
+const getHeadingObject = (editor: PlateEditor<Value>, nodes: Value) => {
+  const ctxNode = nodes.find((n) => isType(editor, n, 'h1'))
+
+  return ctxNode ? getNodeString(ctxNode) : ''
 }
 
 interface SlideTemplate {
-  tokens: slideParser.TokensList | slideParser.Token[]
+  tokens: Value
+  editor: PlateEditor<Value>
   slideBackgroundImage: Slide['backgroundImage']
 }
-const CoverTemplate = ({ tokens, slideBackgroundImage }: SlideTemplate) => {
-  const headingText = getHeadingObject(tokens)?.text || ''
+const CoverTemplate = ({
+  tokens,
+  slideBackgroundImage,
+  editor,
+}: SlideTemplate) => {
+  if (!editor) return null
+
+  const headingText = getHeadingObject(editor, tokens)
 
   return (
     <Wrap slideBackgroundImage={slideBackgroundImage}>
       <StyledHeader data-deckster="true">
-        {/* {slideParser.parseInline(headingText)} */}
+        {slideParser.parseInline(headingText as string)}
       </StyledHeader>
     </Wrap>
   )

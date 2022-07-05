@@ -11,9 +11,7 @@ const DecksterEditor = () => {
     placeholder: 'Strat typing your story...',
   }
 
-  const handleEditorChange = (value: Value) => {
-    console.log(value)
-  }
+  const handleEditorChange = (value: Value) => {}
 
   return (
     <>

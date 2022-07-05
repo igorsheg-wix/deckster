@@ -16,15 +16,8 @@ export const createDashMenuPlugin = createPluginFactory<MentionPlugin>({
   withOverrides: withMention,
   options: {
     trigger: '/',
-    // createMentionNode: (item) => ({ value: item.text }),
   },
-  // plugins: [
-  //   {
-  //     key: ELEMENT_DASHMENU_INPUT,
-  //     isElement: true,
-  //     isInline: true,
-  //   },
-  // ],
+
   then: (_, { key }) => ({
     options: {
       id: key,

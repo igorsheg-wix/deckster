@@ -9,7 +9,6 @@ import {
   insertNodes,
   insertText,
   PlateEditor,
-  removeNodes,
   setSelection,
   TNode,
   TText,
@@ -32,9 +31,7 @@ export const withMention = <
   E extends PlateEditor<V> = PlateEditor<V>
 >(
   editor: E,
-  {
-    options: { id, trigger, inputCreation },
-  }: WithPlatePlugin<MentionPlugin, V, E>
+  { options: { trigger, inputCreation } }: WithPlatePlugin<MentionPlugin, V, E>
 ) => {
   const { type } = getPlugin<{}, V>(editor, ELEMENT_DASHMENU_INPUT)
   const dashMenu = useDecksterStore.getState().dashmenu

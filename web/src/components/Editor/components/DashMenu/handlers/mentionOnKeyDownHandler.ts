@@ -1,7 +1,6 @@
-import { PlateEditor, Value, focusEditor } from '@udecode/plate-core'
+import { PlateEditor, Value } from '@udecode/plate-core'
 import isHotkey from 'is-hotkey'
 import useDecksterStore from 'stores'
-import blockMenuItems from '../menuItems'
 import { findMentionInput } from '../queries'
 import { removeMentionInput } from '../transforms'
 import { getNextWrappingIndex } from '../utils'

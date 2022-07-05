@@ -1,11 +1,12 @@
+import { Value } from '@udecode/plate'
 import { marked } from 'marked'
 import { Temaplte } from 'types'
 import { indices } from './calcs'
 import dt from './decision-tree.js'
 
 const trainingData = [
-  { headings: 1, paragraphs: 0, images: 0, template: Temaplte.cover },
-  { headings: 1, paragraphs: 1, images: 0, template: Temaplte.titleWithP },
+  { h1: 1, p: 0, img: 0, template: Temaplte.cover },
+  { h1: 1, p: 1, img: 0, template: Temaplte.titleWithP },
 ]
 
 var config = {
@@ -15,19 +16,19 @@ var config = {
 
 const decisionTree = new dt.DecisionTree(config)
 
-export const templateEngine = (tokens: marked.Token[]): Temaplte => {
+export const templateEngine = (tokens: Value): Temaplte => {
   const tokensToPredict = {
-    headings: indices(
+    h1: indices(
       tokens.map((t) => t.type),
-      'heading'
+      'h1'
     ).length,
-    paragraphs: indices(
+    p: indices(
       tokens.map((t) => t.type),
-      'paragraph'
+      'p'
     ).length,
-    images: indices(
+    img: indices(
       tokens.map((t) => t.type),
-      'image'
+      'img'
     ).length,
   }
   return decisionTree.predict(tokensToPredict)

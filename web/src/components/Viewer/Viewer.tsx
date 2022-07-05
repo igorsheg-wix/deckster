@@ -1,30 +1,69 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { marked } from 'marked'
-import { pxToVw, indices } from 'utils/calcs'
+import { pxToVw } from 'utils/calcs'
 // import { slide, templates, templateEngine } from 'public/slides'
-import { getSlideChildsWithMeasurement } from 'utils/measure'
+import {
+  findNodePath,
+  getNodeProps,
+  usePlateSelectors,
+  Value,
+} from '@udecode/plate'
+import { Path } from 'slate'
 import useDecksterStore, { DecksterStore } from 'stores'
 import { templates } from 'templates'
-import { templateEngine } from 'utils/template-engine'
+import { getSlideChildsWithMeasurement } from 'utils/measure'
 import SlideUtils from 'utils/slide-utils'
-import { Editor } from 'slate'
-import { ReactEditor, useSlateStatic } from 'slate-react'
+import { templateEngine } from 'utils/template-engine'
 
 const Viewer = () => {
+  const editorValue = usePlateSelectors().value()
+  const editor = usePlateSelectors().editor()
+  const [slideNodes, setSlideNodes] = useState<Record<'nodes', Value>[]>([])
   const ref = React.createRef<HTMLDivElement>()
   const editorNodes = useDecksterStore((s) => s.editorNodes)
   const setDecksterStore = useDecksterStore((s) => s.set)
   const cursorOnSlide = useDecksterStore((s) => s.cursorOnSlide)
   const slides = useDecksterStore((s) => s.slides)
 
+  useEffect(() => {
+    if (editor) {
+      let hrNodes: Array<Path> = [[0]]
+
+      editorValue?.map((node) => {
+        const { type } = getNodeProps(node)
+
+        const yay = findNodePath(editor, node)
+
+        if (type === 'hr' && yay) {
+          hrNodes.push(yay)
+        }
+      })
+
+      const slideNodes = () => {
+        let nodes: Record<'nodes', Value>[] = []
+        hrNodes.map((hr, index) => {
+          const nextHr = hrNodes[index + 1] || hr[0]
+          const ctxNodes = editorValue?.slice(hr[0], nextHr[0])
+          if (ctxNodes) {
+            nodes.push({ nodes: ctxNodes })
+          }
+          // for (let n = 0; n < hr?.length; n++) {
+          //   editorValue
+          // }
+        })
+        return nodes
+      }
+      setSlideNodes(() => slideNodes())
+    }
+  }, [editorValue])
+
   // React.useEffect(() => {
   //   if (data && data.length) {
   //     const tokens = marked.lexer(data)
-  //     const hrTokens = indices(
-  //       tokens.map((t) => t.type),
-  //       'hr'
-  //     )
+  // const hrTokens = indices(
+  //   tokens.map((t) => t.type),
+  //   'hr'
+  // )
 
   //     const withFirstSlide = [0, ...hrTokens]
 
@@ -57,6 +96,20 @@ const Viewer = () => {
   //   })
   // }, [editorNodes])
 
+  useEffect(() => {
+    const newSlides = slideNodes.map((slide, index) => {
+      return SlideUtils().create({
+        title: `slide${index}`,
+        id: `slide${index}`,
+        tokens: slide.nodes,
+      })
+    })
+    setDecksterStore((s) => {
+      s.slides = newSlides
+    })
+    console.log(slideNodes)
+  }, [slideNodes])
+
   return (
     <Wrap ref={ref}>
       {!slides.length ? (
@@ -77,7 +130,7 @@ const Viewer = () => {
 }
 
 interface SlideProps {
-  tokens: marked.TokensList | marked.Token[]
+  tokens: Value
   id: string
   setDecksterStore: (fn: (draft: DecksterStore, args: any) => void) => void
   cursorOnSlide: number
@@ -92,6 +145,7 @@ const Slide = ({
   index,
 }: SlideProps) => {
   const ref = React.createRef<HTMLDivElement>()
+  const editor = usePlateSelectors().editor()
 
   React.useEffect(() => {
     if (ref && ref.current && cursorOnSlide === index) {
@@ -141,7 +195,13 @@ const Slide = ({
       ref={ref}
     >
       <SlideContent>
-        <Template slideBackgroundImage={slideBackgroundImage} tokens={tokens} />
+        {editor && (
+          <Template
+            slideBackgroundImage={slideBackgroundImage}
+            editor={editor}
+            tokens={tokens}
+          />
+        )}
       </SlideContent>
     </StyledSlide>
   )
@@ -202,4 +262,3 @@ const SlideContent = styled.div`
 `
 
 export { Viewer }
-// define({ "x-viewer": Viewer });

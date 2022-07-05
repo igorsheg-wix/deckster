@@ -1,3 +1,4 @@
+import { Value } from '@udecode/plate'
 import { marked } from 'marked'
 import { Slide, Temaplte } from 'types'
 
@@ -8,7 +9,7 @@ export default () => {
 interface NewSlide {
   id: string
   title: string
-  tokens: marked.TokensList | marked.Token[]
+  tokens: Value
 }
 
 const create = (props: NewSlide): Slide => {

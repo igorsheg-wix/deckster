@@ -64,7 +64,7 @@ const logic = createMyPlugins(
     createSoftBreakPlugin(CONFIG.softBreak),
     createExitBreakPlugin(CONFIG.exitBreak),
     createResetNodePlugin(),
-    createTrailingBlockPlugin(CONFIG.trailingBlock),
+    // createTrailingBlockPlugin(CONFIG.trailingBlock),
     createSelectOnBackspacePlugin(CONFIG.selectOnBackspace),
   ],
   { components }

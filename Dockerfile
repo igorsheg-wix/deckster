@@ -13,5 +13,6 @@ COPY --from=builder /app/deckster /
 COPY --from=builder /app/.env /
 
 ENV GIN_MODE=release
+ENV BACKEND_ADDRESS=0.0.0.0
 
 CMD ["/deckster"]
