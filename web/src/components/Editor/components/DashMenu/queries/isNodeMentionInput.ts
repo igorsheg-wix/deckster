@@ -1,6 +1,6 @@
-import { getPluginType, PlateEditor, TNode, Value } from '@udecode/plate-core'
+import { PlateEditor, TNode, Value, getPluginType } from '@udecode/plate-core'
 import { ELEMENT_DASHMENU_INPUT } from 'components/Editor/Editor.types'
-import { TMentionInputElement } from '../types'
+import { TMentionInputElement } from '../DashMenu.types'
 
 export const isNodeMentionInput = <V extends Value>(
   editor: PlateEditor<V>,

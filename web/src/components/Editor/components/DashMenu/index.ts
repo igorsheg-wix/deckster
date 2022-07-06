@@ -3,8 +3,7 @@
  */
 
 export * from './createMentionPlugin'
-export * from './getMentionOnSelectItem'
-export * from './types'
+export * from './DashMenu.types'
 export * from './withDashMenu'
 export * from './handlers/index'
 export * from './queries/index'

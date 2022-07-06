@@ -9,11 +9,11 @@ import {
   ELEMENT_PARAGRAPH,
   PlatePluginComponent,
 } from '@udecode/plate'
-import { DashMenuElement } from '../components/DashMenu/EditorElement'
+import { ELEMENT_DASHMENU_INPUT } from '../Editor.types'
+import { DashMenuElement } from '../components/DashMenu/DashMenu.element'
 import { HeadingElement } from '../components/Heading/Heading'
 import { HorizontalLineElement } from '../components/HorizontalLine/HorizontalLine'
 import { ParagraphElement } from '../components/Paragraph/Paragraph'
-import { ELEMENT_DASHMENU_INPUT } from '../Editor.types'
 
 export const components: Record<string, PlatePluginComponent<any>> = {
   [ELEMENT_PARAGRAPH]: ParagraphElement,

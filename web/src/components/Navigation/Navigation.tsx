@@ -1,7 +1,7 @@
+import React from 'react'
 import { Button } from '@mantine/core'
 import Flex from 'components/Flex'
 import Padder from 'components/Padder'
-import React from 'react'
 import styled from 'styled-components'
 
 const Navigation = () => {

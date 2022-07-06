@@ -1,5 +1,5 @@
-import { PlateEditor, Value, isType } from '@udecode/plate'
 import { useCallback } from 'react'
+import { PlateEditor, Value, isType } from '@udecode/plate'
 import DOMPurify from 'dompurify'
 import parse from 'html-react-parser'
 import { serializeHtml } from 'utils/serializeHtml'

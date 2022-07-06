@@ -1,6 +1,5 @@
 import {
   AutoformatPlugin,
-  createPlateUI,
   ELEMENT_BLOCKQUOTE,
   ELEMENT_CODE_BLOCK,
   ELEMENT_H1,
@@ -16,22 +15,21 @@ import {
   ELEMENT_TODO_LI,
   ExitBreakPlugin,
   IndentPlugin,
-  isBlockAboveEmpty,
-  isSelectionAtBlockStart,
   KEYS_HEADING,
   NormalizeTypesPlugin,
+  PlateEditor,
   ResetNodePlugin,
   SelectOnBackspacePlugin,
   SoftBreakPlugin,
   TEditableProps,
   TrailingBlockPlugin,
+  Value,
+  createPlateUI,
+  isBlockAboveEmpty,
+  isSelectionAtBlockStart,
 } from '@udecode/plate'
+import type { MyPlatePlugin, MyValue } from 'components/Editor/Editor.types'
 import { autoformatRules } from './autoformat/autoformatRules'
-import type {
-  MyEditor,
-  MyPlatePlugin,
-  MyValue,
-} from 'components/Editor/Editor.types'
 
 const resetBlockTypesCommonRule = {
   types: [
@@ -51,7 +49,7 @@ export const CONFIG: {
   components: Record<string, any>
   editableProps: TEditableProps<MyValue>
   align: Partial<MyPlatePlugin>
-  autoformat: Partial<MyPlatePlugin<AutoformatPlugin<MyValue, MyEditor>>>
+  autoformat: Partial<MyPlatePlugin<AutoformatPlugin<Value, PlateEditor>>>
   exitBreak: Partial<MyPlatePlugin<ExitBreakPlugin>>
   forceLayout: Partial<MyPlatePlugin<NormalizeTypesPlugin>>
   indent: Partial<MyPlatePlugin<IndentPlugin>>

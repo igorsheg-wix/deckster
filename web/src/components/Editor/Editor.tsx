@@ -1,17 +1,10 @@
-import {
-  getCursorOverlayState,
-  getPath,
-  Plate,
-  usePlateSelectors,
-  Value,
-  usePlateSelection,
-} from '@udecode/plate'
 import React from 'react'
+import { Plate } from '@udecode/plate'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import styles from './Editor.module.scss'
 import DashMenu from './components/DashMenu/DashMenu'
 import { PLUGINS } from './config/plugins'
-import styles from './Editor.module.scss'
 
 const DecksterEditor = () => {
   const editableProps = {
@@ -19,22 +12,20 @@ const DecksterEditor = () => {
   }
 
   return (
-    <>
-      <DndProvider backend={HTML5Backend}>
-        <div id="deckster-editor" className={styles.root}>
-          <Plate
-            plugins={[
-              ...PLUGINS.basicElements,
-              ...PLUGINS.basicMarks,
-              ...PLUGINS.logic,
-            ]}
-            editableProps={editableProps}
-          >
-            <DashMenu />
-          </Plate>
-        </div>
-      </DndProvider>
-    </>
+    <DndProvider backend={HTML5Backend}>
+      <div id="deckster-editor" className={styles.root}>
+        <Plate
+          plugins={[
+            ...PLUGINS.basicElements,
+            ...PLUGINS.basicMarks,
+            ...PLUGINS.logic,
+          ]}
+          editableProps={editableProps}
+        >
+          <DashMenu />
+        </Plate>
+      </div>
+    </DndProvider>
   )
 }
 

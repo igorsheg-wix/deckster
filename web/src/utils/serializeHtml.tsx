@@ -1,18 +1,18 @@
 import {
+  elementToHtml,
   leafToHtml,
   newLinesToHtmlBr,
-  elementToHtml,
-  trimWhitespace,
   stripSlateDataAttributes,
+  trimWhitespace,
 } from '@udecode/plate'
 import {
   EDescendant,
   EElement,
   EText,
-  isText,
   PlateEditor,
   SlateProps,
   Value,
+  isText,
 } from '@udecode/plate-core'
 import { encode } from 'html-entities'
 

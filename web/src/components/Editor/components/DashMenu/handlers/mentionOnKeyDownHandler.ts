@@ -6,8 +6,8 @@ import { removeMentionInput } from '../transforms'
 import { getNextWrappingIndex } from '../utils'
 import { KeyboardEventHandler } from './KeyboardEventHandler'
 import {
-  moveSelectionByOffset,
   MoveSelectionByOffsetOptions,
+  moveSelectionByOffset,
 } from './moveSelectionByOffset'
 
 export const mentionOnKeyDownHandler: <V extends Value>(

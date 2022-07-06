@@ -6,17 +6,15 @@ import {
   virtualReference,
 } from '@udecode/plate-ui-popper'
 import { useCombobox } from 'downshift'
-import { matchSorter } from 'match-sorter'
 import React, { useCallback, useEffect } from 'react'
 import useDecksterStore from 'stores'
 import styled from 'styled-components'
-import createElementOnSelectItem from './createElementOnSelectItem'
+import createElementOnSelectItem from './handlers/createElementOnSelectItem'
 import blockMenuItems from './menuItems'
 import filterExcessSeparators from './utils/filterExcessSeparators'
 
 function Menu() {
   const dashmenu = useDecksterStore((s) => s.dashmenu)
-  // const [inputItems, setInputItems] = useState(blockMenuItems())
   const popperRef = React.useRef<any>(null)
   const editor = useEditorState()
   const { insertText: _insertText } = editor
@@ -34,7 +32,7 @@ function Menu() {
     highlightedIndex: dashmenu.highlightedIndex,
   })
 
-  let targetRange = editor.selection || null
+  const targetRange = editor.selection || null
 
   const getBoundingClientRect = useCallback(
     () => getRangeBoundingClientRect(editor, targetRange) ?? virtualReference,

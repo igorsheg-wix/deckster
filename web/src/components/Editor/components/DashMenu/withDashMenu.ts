@@ -1,3 +1,4 @@
+import { MentionPlugin, TMentionInputElement } from '@udecode/plate'
 import { comboboxActions } from '@udecode/plate-combobox'
 import {
   getEditorString,
@@ -24,7 +25,6 @@ import {
   isSelectionInMentionInput,
 } from './queries'
 import { removeMentionInput } from './transforms/removeMentionInput'
-import { MentionPlugin, TMentionInputElement } from './types'
 
 export const withMention = <
   V extends Value = Value,
@@ -141,7 +141,6 @@ export const withMention = <
       if (inputCreation) {
         data[inputCreation.key] = inputCreation.value
       }
-      // removeNodes(editor)
       return insertNodes<TMentionInputElement>(editor, data)
     }
 

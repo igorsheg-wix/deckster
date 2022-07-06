@@ -3,9 +3,9 @@ import {
   ELEMENT_OL,
   ELEMENT_TODO_LI,
   ELEMENT_UL,
+  TTodoListItemElement,
   isBlock,
   setNodes,
-  TTodoListItemElement,
 } from '@udecode/plate'
 import { MyAutoformatRule } from 'components/Editor/Editor.types'
 import { formatList, preFormat } from './autoformatUtils'

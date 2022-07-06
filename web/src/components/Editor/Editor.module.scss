@@ -160,3 +160,15 @@
   justify-content: center;
   align-items: center;
 }
+
+.emptyBlockPlaceHolder {
+  content: attr('data-placeholder');
+  position: absolute;
+  pointer-events: none;
+  width: 100%;
+  color: rgb(143, 143, 143);
+  max-width: 100%;
+  display: block;
+  user-select: none;
+  text-decoration: none;
+}

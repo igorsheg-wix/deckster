@@ -1,5 +1,5 @@
-import { usePlateSelectors } from '@udecode/plate'
 import React from 'react'
+import { usePlateSelectors } from '@udecode/plate'
 import useDecksterStore from 'stores'
 import { templates } from 'templates'
 import { Slide } from 'types'

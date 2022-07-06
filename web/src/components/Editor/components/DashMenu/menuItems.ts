@@ -1,15 +1,15 @@
 import {
+  DividerHorizontalIcon,
+  HeadingIcon,
+  TextIcon,
+} from '@radix-ui/react-icons'
+import {
   ELEMENT_H1,
   ELEMENT_H2,
   ELEMENT_H3,
   ELEMENT_HR,
   ELEMENT_PARAGRAPH,
 } from '@udecode/plate'
-import {
-  HeadingIcon,
-  DividerHorizontalIcon,
-  TextIcon,
-} from '@radix-ui/react-icons'
 import { MenuItem } from 'components/Editor/Editor.types'
 
 export default function blockMenuItems(): MenuItem[] {

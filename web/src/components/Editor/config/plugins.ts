@@ -12,13 +12,13 @@ import {
   createNodeIdPlugin,
   createParagraphPlugin,
   createPlateUI,
+  createRemoveEmptyNodesPlugin,
   createResetNodePlugin,
   createSelectOnBackspacePlugin,
   createSoftBreakPlugin,
   createStrikethroughPlugin,
   createSubscriptPlugin,
   createSuperscriptPlugin,
-  createTrailingBlockPlugin,
   createUnderlinePlugin,
 } from '@udecode/plate'
 import { createDashMenuPlugin } from '../components/DashMenu/createMentionPlugin'
@@ -56,15 +56,14 @@ const basicMarks = createMyPlugins(
 
 const logic = createMyPlugins(
   [
-    //@ts-ignore
+    createDndPlugin(),
     createAutoformatPlugin(CONFIG.autoformat),
     createDashMenuPlugin(),
     createNodeIdPlugin(),
-    createDndPlugin(),
     createSoftBreakPlugin(CONFIG.softBreak),
     createExitBreakPlugin(CONFIG.exitBreak),
     createResetNodePlugin(CONFIG.resetBlockType),
-    // createTrailingBlockPlugin(CONFIG.trailingBlock),
+    createRemoveEmptyNodesPlugin(),
     createSelectOnBackspacePlugin(CONFIG.selectOnBackspace),
   ],
   { components }

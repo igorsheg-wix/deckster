@@ -1,6 +1,6 @@
+import React from 'react'
 import { PlateEditor, Value } from '@udecode/plate'
 import { useEditorTohtml } from 'hooks/useEditorToHtml'
-import React from 'react'
 import styled from 'styled-components'
 import { Slide } from 'types'
 import { pxToVw } from 'utils/calcs'

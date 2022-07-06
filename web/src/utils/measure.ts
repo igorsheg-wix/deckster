@@ -45,7 +45,7 @@ function getBoundingRect(element, offsetParent, scrollContainer = window) {
 const getSlideDOMChilds = (node) => {
   const childs = document.querySelectorAll('[data-deckster="true"]')
   if (childs.length) {
-    let childsArray = Array.from(childs)
+    const childsArray = Array.from(childs)
     return childsArray.filter((ch) => ch.closest(`#${node.id}`))
   } else {
     return []

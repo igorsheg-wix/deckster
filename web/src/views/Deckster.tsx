@@ -1,9 +1,9 @@
+import React, { FC } from 'react'
 import { PlateProvider, withPlateProvider } from '@udecode/plate'
 import { DecksterEditor } from 'components/Editor'
 import Flex from 'components/Flex'
 import Navigation from 'components/Navigation/Navigation'
 import { Viewer } from 'components/Viewer'
-import React, { FC } from 'react'
 import styled from 'styled-components'
 
 const Deckster: FC = () => {

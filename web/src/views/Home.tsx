@@ -1,5 +1,5 @@
-import { Button } from '@mantine/core'
 import React from 'react'
+import { Button } from '@mantine/core'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import Flex from '../components/Flex'

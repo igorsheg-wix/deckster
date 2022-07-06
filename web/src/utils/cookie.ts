@@ -1,8 +1,8 @@
 export function getCookie(cookieName: string) {
-  var name = cookieName + '='
-  var ca = document.cookie.split(';')
-  for (var i = 0; i < ca.length; i++) {
-    var c = ca[i].trim()
+  const name = cookieName + '='
+  const ca = document.cookie.split(';')
+  for (let i = 0; i < ca.length; i++) {
+    const c = ca[i].trim()
     if (c.indexOf(name) == 0) {
       return c.substring(name.length)
     }

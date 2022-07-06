@@ -1,24 +1,13 @@
+import { ForwardRefExoticComponent, HTMLAttributes, RefAttributes } from 'react'
+import { IconProps } from '@radix-ui/react-icons/dist/types'
 import {
-  ForwardRefExoticComponent,
-  HTMLAttributes,
-  ReactElement,
-  RefAttributes,
-} from 'react'
-import {
-  EElement,
-  PlateRenderElementProps,
-  TElement,
-  Value,
   AutoformatRule,
-  createPlateEditor,
   CreatePlateEditorOptions,
-  createPluginFactory,
-  createPlugins,
-  createTEditor,
+  DOMHandler,
   Decorate,
   DecorateEntry,
-  DOMHandler,
   EDescendant,
+  EElement,
   EElementEntry,
   EElementOrText,
   ELEMENT_BLOCKQUOTE,
@@ -46,10 +35,6 @@ import {
   ENodeEntry,
   EText,
   ETextEntry,
-  getPlateActions,
-  getPlateEditorRef,
-  getPlateSelectors,
-  getTEditor,
   InjectComponent,
   InjectProps,
   KeyboardHandler,
@@ -62,8 +47,10 @@ import {
   PlatePluginInsertData,
   PlatePluginProps,
   PlateProps,
+  PlateRenderElementProps,
   PluginOptions,
   SerializeHtml,
+  TElement,
   TImageElement,
   TLinkElement,
   TMediaEmbedElement,
@@ -74,15 +61,23 @@ import {
   TTableElement,
   TText,
   TTodoListItemElement,
+  Value,
+  WithOverride,
+  createPlateEditor,
+  createPluginFactory,
+  createPlugins,
+  createTEditor,
+  getPlateActions,
+  getPlateEditorRef,
+  getPlateSelectors,
+  getTEditor,
   useEditorRef,
   useEditorState,
   usePlateEditorRef,
   usePlateEditorState,
   usePlateSelectors,
-  WithOverride,
 } from '@udecode/plate'
 import { CSSProperties } from 'styled-components'
-import { IconProps } from '@radix-ui/react-icons/dist/types'
 
 /**
  * Text
@@ -256,6 +251,7 @@ export interface MyMediaEmbedElement
 export interface MyHrElement extends MyBlockElement {
   type: typeof ELEMENT_HR
   children: [EmptyText]
+  index: number
 }
 
 export type MyNestableBlock = MyParagraphElement

@@ -9,7 +9,7 @@ const trainingData = [
   { h1: 1, p: 1, img: 0, template: Temaplte.titleWithP },
 ]
 
-var config = {
+const config = {
   trainingSet: trainingData,
   categoryAttr: 'template',
 }

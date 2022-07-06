@@ -1,5 +1,5 @@
-import { Button } from '@mantine/core'
 import React, { useEffect } from 'react'
+import { Button } from '@mantine/core'
 import { useNavigate } from 'react-router-dom'
 import useDecksterStore from 'stores'
 import styled from 'styled-components'
@@ -7,7 +7,7 @@ import Flex from '../components/Flex'
 
 const Login = () => {
   const { userInfo } = useDecksterStore()
-  let navigate = useNavigate()
+  const navigate = useNavigate()
 
   const loginHandler = () => {
     window.open('/oauth/login', '_self')

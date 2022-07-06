@@ -1,4 +1,4 @@
-import { moveSelection, PlateEditor, Value } from '@udecode/plate-core'
+import { PlateEditor, Value, moveSelection } from '@udecode/plate-core'
 import isHotkey from 'is-hotkey'
 import { Range } from 'slate'
 import { KeyboardEventHandler } from './KeyboardEventHandler'

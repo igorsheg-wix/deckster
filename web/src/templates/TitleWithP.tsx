@@ -1,6 +1,6 @@
+import React from 'react'
 import { PlateEditor, Value } from '@udecode/plate'
 import { useEditorTohtml } from 'hooks/useEditorToHtml'
-import React from 'react'
 import styled from 'styled-components'
 import { pxToVw } from 'utils/calcs'
 
@@ -54,22 +54,6 @@ const Wrap = styled.div`
     width: ${pxToVw(766)}vw;
     margin-left: ${pxToVw(80)}vw;
   }
-`
-
-const StyledHeader = styled.h1`
-  margin-left: ${pxToVw(80)}vw;
-  font-size: ${pxToVw(45)}vw;
-  line-height: ${pxToVw(54)}vw;
-  font-weight: 600;
-  width: ${pxToVw(766)}vw;
-`
-
-const Paragraph = styled.p`
-  font-size: ${pxToVw(18.5)}vw;
-  line-height: ${pxToVw(30)}vw;
-  font-weight: 400;
-  width: ${pxToVw(766)}vw;
-  margin-left: ${pxToVw(80)}vw;
 `
 
 export default TitleAndParagraph

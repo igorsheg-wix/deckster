@@ -39,7 +39,7 @@ const App: FC = () => {
 }
 
 function RequireAuth({ children }: { children: JSX.Element }) {
-  let location = useLocation()
+  const location = useLocation()
   const accessToken = getCookie('access_token')
 
   if (!accessToken) {

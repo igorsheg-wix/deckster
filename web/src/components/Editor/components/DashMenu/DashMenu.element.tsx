@@ -1,15 +1,15 @@
+import React from 'react'
 import {
+  Value,
   isCollapsed,
   isElementEmpty,
   useEditorState,
-  Value,
 } from '@udecode/plate'
 import { ElementProps } from 'components/Editor/Editor.types'
-import React from 'react'
 import { useFocused, useSelected } from 'slate-react'
 import styled, { css } from 'styled-components'
 
-interface DashMenuElementProps<V extends Value> extends ElementProps<V> {}
+type DashMenuElementProps<V extends Value> = ElementProps<V>
 
 export const DashMenuElement = <V extends Value>(
   props: DashMenuElementProps<V>
@@ -28,15 +28,12 @@ export const DashMenuElement = <V extends Value>(
     (!hideOnBlur ||
       (isCollapsed(editor.selection) && hideOnBlur && focused && selected))
 
+  console.log(children)
+
   return (
-    <Wrap
-      {...attributes}
-      {...nodeProps}
-      placeholder="Keep typing to filter..."
-      isEmptyBlock={enabled}
-    >
+    <span {...attributes} {...nodeProps} placeholder="Keep typing to filter...">
       / {children}
-    </Wrap>
+    </span>
   )
 }
 

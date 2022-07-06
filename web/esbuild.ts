@@ -1,5 +1,6 @@
 import esbuild from 'esbuild'
-import { sassPlugin, postcssModules } from 'esbuild-sass-plugin'
+import { postcssModules, sassPlugin } from 'esbuild-sass-plugin'
+//@ts-ignore
 const isDevServer = process.argv.includes('--dev')
 
 esbuild
@@ -9,6 +10,7 @@ esbuild
     outfile: 'www/static/bundle.js',
     minify: !isDevServer,
     sourcemap: true,
+    treeShaking: true,
     incremental: isDevServer,
     define: {
       'process.env.NODE_ENV': isDevServer ? '"development"' : '"production"',
@@ -29,4 +31,8 @@ esbuild
       }),
     ],
   })
-  .catch(() => process.exit(1))
+  .catch((err) => {
+    console.log(err)
+    //@ts-ignore
+    process.exit(1)
+  })

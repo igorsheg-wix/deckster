@@ -1,34 +1,17 @@
+import React, { useEffect } from 'react'
 import {
-  findNodePath,
-  getNodeProps,
+  Value,
   getPreviousNode,
-  PlateEditor,
   usePlateSelection,
   usePlateSelectors,
-  Value,
+  withRemoveEmptyNodes,
 } from '@udecode/plate'
 import { Slide } from 'components/Slide'
-import React, { useEffect } from 'react'
-import { Path } from 'slate'
 import useDecksterStore from 'stores'
 import styled from 'styled-components'
 import { pxToVw } from 'utils/calcs'
+import { gethrNodes } from 'utils/get-hr-nodes'
 import SlideUtils from 'utils/slide-utils'
-import * as ScrollArea from '@radix-ui/react-scroll-area'
-
-const gethrNodes = (editor: PlateEditor<Value>, editorValue: Value) => {
-  let hrNodes: Array<Path> = [[0]]
-
-  editorValue.map((node) => {
-    const { type } = getNodeProps(node)
-    const nodePath = findNodePath(editor, node)
-
-    if (type === 'hr' && nodePath) {
-      hrNodes.push(nodePath)
-    }
-  })
-  return hrNodes
-}
 
 const Viewer = () => {
   const editorValue = usePlateSelectors().value()
@@ -65,7 +48,7 @@ const Viewer = () => {
       const hrNodes = gethrNodes(editor, editorValue)
 
       const slideNodes = () => {
-        let nodes: Record<'nodes', Value>[] = []
+        const nodes: Record<'nodes', Value>[] = []
         hrNodes.map((hr, index) => {
           const nextHr = hrNodes[index + 1] || hr[0]
           const ctxNodes = editorValue?.slice(hr[0], nextHr[0])
@@ -75,6 +58,10 @@ const Viewer = () => {
         })
         return nodes
       }
+      // console.log('slideNodes()', editor.children)
+
+      // const yay = withRemoveEmptyNodes(editor, { type: 'p' })
+      // console.log(yay)
 
       const newSlides = slideNodes().map((slide, index) => {
         return SlideUtils().create({
@@ -139,22 +126,6 @@ const Wrap = styled.div`
   max-height: calc(100vh - 96px);
   flex-direction: column;
   justify-content: flex-start;
-`
-const StyledSlide = styled.div`
-  position: relative;
-  width: 100%;
-  padding-top: 56.263%;
-  display: flex;
-  margin: 0 0 30px 0;
-`
-
-const SlideContent = styled.div`
-  position: absolute;
-  background: white;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
 `
 
 export { Viewer }
