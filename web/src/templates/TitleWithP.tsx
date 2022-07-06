@@ -1,5 +1,6 @@
 import {
   getNodeString,
+  isText,
   isType,
   PlateEditor,
   serializeHtml,
@@ -13,6 +14,7 @@ import { pxToVw } from 'utils/calcs'
 import { marked as slideParser } from 'utils/slide-token-parser'
 const getParagraphObject = (editor: PlateEditor<Value>, nodes: Value) => {
   const ctxNodes = nodes.filter((n) => isType(editor, n, 'p'))
+  console.log(isText(ctxNodes[0]))
 
   return ctxNodes
     ? serializeHtml(editor, {
@@ -25,8 +27,15 @@ const getParagraphObject = (editor: PlateEditor<Value>, nodes: Value) => {
 
 const getHeadingObject = (editor: PlateEditor<Value>, nodes: Value) => {
   const ctxNode = nodes.find((n) => isType(editor, n, 'h1'))
+  console.log(ctxNode ? ctxNode.text : '')
 
-  return ctxNode ? slideParser.parseInline(getNodeString(ctxNode)) : ''
+  return ctxNode
+    ? serializeHtml(editor, {
+        nodes: [ctxNode],
+        convertNewLinesToHtmlBr: true,
+        stripWhitespace: false,
+      })
+    : ''
 }
 
 interface SlideTemplate {
@@ -39,12 +48,22 @@ const TitleAndParagraph = ({ tokens, editor }: SlideTemplate) => {
   const paragraphNodes = tokens.filter((n) => isType(editor, n, 'p'))
 
   const paragparhContent = useCallback(
-    () => parse(DOMPurify.sanitize(getParagraphObject(editor, tokens))),
+    () =>
+      parse(
+        DOMPurify.sanitize(getParagraphObject(editor, tokens), {
+          ALLOWED_TAGS: ['br'],
+        })
+      ),
     [paragraphNodes]
   )
 
   const headingContent = useCallback(
-    () => parse(DOMPurify.sanitize(getHeadingObject(editor, tokens))),
+    () =>
+      parse(
+        DOMPurify.sanitize(getHeadingObject(editor, tokens), {
+          ALLOWED_TAGS: ['br'],
+        })
+      ),
     [headingNode]
   )
 

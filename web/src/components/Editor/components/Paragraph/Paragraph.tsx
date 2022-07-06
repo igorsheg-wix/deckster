@@ -11,11 +11,11 @@ export const ParagraphElement = <V extends Value>(
 ) => {
   const { attributes, className, children, nodeProps, as = 'p' } = props
 
-  const el = React.createElement(as, {}, ...children)
-
-  return (
-    <div {...attributes} {...nodeProps} data-deckster-node="p">
-      {el}
-    </div>
+  const el = React.createElement(
+    as,
+    { ...attributes, ...nodeProps, 'data-deckster-node': 'p' },
+    ...children
   )
+
+  return <div>{el}</div>
 }
