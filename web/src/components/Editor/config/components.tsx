@@ -6,14 +6,17 @@ import {
   ELEMENT_H5,
   ELEMENT_H6,
   ELEMENT_HR,
+  ELEMENT_PARAGRAPH,
   PlatePluginComponent,
 } from '@udecode/plate'
 import { DashMenuElement } from '../components/DashMenu/EditorElement'
 import { HeadingElement } from '../components/Heading/Heading'
 import { HorizontalLineElement } from '../components/HorizontalLine/HorizontalLine'
+import { ParagraphElement } from '../components/Paragraph/Paragraph'
 import { ELEMENT_DASHMENU_INPUT } from '../Editor.types'
 
 export const components: Record<string, PlatePluginComponent<any>> = {
+  [ELEMENT_PARAGRAPH]: ParagraphElement,
   [ELEMENT_H1]: (props) => HeadingElement({ as: 'h1', ...props }),
   [ELEMENT_H2]: (props) => HeadingElement({ as: 'h2', ...props }),
   [ELEMENT_H3]: (props) => HeadingElement({ as: 'h3', ...props }),

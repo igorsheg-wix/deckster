@@ -1,18 +1,17 @@
 import {
   getBlockAbove,
-  isEndPoint,
-  withoutNormalizing,
   insertText,
-  select,
-  withoutMergingHistory,
-  removeNodes,
-  setNodes,
+  isEndPoint,
   PlateEditor,
-  focusEditor,
+  removeNodes,
+  select,
+  setNodes,
+  withoutMergingHistory,
+  withoutNormalizing,
 } from '@udecode/plate'
 import { ELEMENT_DASHMENU_INPUT } from 'components/Editor/Editor.types'
-import { MenuItem } from '../../Editor.types'
 import { Range } from 'slate'
+import { MenuItem } from '../../Editor.types'
 
 const createElementOnSelectItem = (
   ev: React.SyntheticEvent,
@@ -44,7 +43,6 @@ const createElementOnSelectItem = (
       type: item.key,
       children: [{ text: '' }],
     })
-    focusEditor(editor)
   })
 }
 

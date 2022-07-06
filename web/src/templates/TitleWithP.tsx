@@ -2,22 +2,31 @@ import {
   getNodeString,
   isType,
   PlateEditor,
-  usePlateSelectors,
+  serializeHtml,
   Value,
 } from '@udecode/plate'
-import React from 'react'
+import DOMPurify from 'dompurify'
+import parse from 'html-react-parser'
+import React, { useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import { pxToVw } from 'utils/calcs'
+import { marked as slideParser } from 'utils/slide-token-parser'
+const getParagraphObject = (editor: PlateEditor<Value>, nodes: Value) => {
+  const ctxNodes = nodes.filter((n) => isType(editor, n, 'p'))
 
-const getParagraphObject = (tokens: Value) => {
-  const pTokens = tokens.filter((t) => t.type === 'paragraph')
-  return pTokens as Value
+  return ctxNodes
+    ? serializeHtml(editor, {
+        nodes: ctxNodes,
+        convertNewLinesToHtmlBr: true,
+        stripWhitespace: false,
+      })
+    : ''
 }
 
 const getHeadingObject = (editor: PlateEditor<Value>, nodes: Value) => {
   const ctxNode = nodes.find((n) => isType(editor, n, 'h1'))
 
-  return ctxNode ? getNodeString(ctxNode) : ''
+  return ctxNode ? slideParser.parseInline(getNodeString(ctxNode)) : ''
 }
 
 interface SlideTemplate {
@@ -26,35 +35,23 @@ interface SlideTemplate {
 }
 
 const TitleAndParagraph = ({ tokens, editor }: SlideTemplate) => {
-  // console.log('From viewer', editorValue)
-  // console.log('tokens -------------->', tokens)
+  const headingNode = tokens.find((n) => isType(editor, n, 'h1'))
+  const paragraphNodes = tokens.filter((n) => isType(editor, n, 'p'))
 
-  // const heading = findNode(editor, {
-  //   match: (n) => n.type === 'h1',
-  // })
-  // console.log('headingh', heading)
-  // // console.log('tokens', tokens)
+  const paragparhContent = useCallback(
+    () => parse(DOMPurify.sanitize(getParagraphObject(editor, tokens))),
+    [paragraphNodes]
+  )
 
-  if (!editor) return null
-
-  // const yay =
-  //   getHeadingObject(editor) &&
-  //   serializeHtml(editor, { nodes: [getHeadingObject(editor)] })
-  // console.log('HTML ----->', yay)
-  // console.log('Tokens ----->', tokens)
-
-  const headingText = getHeadingObject(editor, tokens)
-
-  // console.log(
-  //   'headingText -------->',
-  //   headingText ? getNodeString(headingText) : ''
-  // )
+  const headingContent = useCallback(
+    () => parse(DOMPurify.sanitize(getHeadingObject(editor, tokens))),
+    [headingNode]
+  )
 
   return (
     <Wrap>
-      {/* {serializeHtml(editor, { nodes: tokens[0] })} */}
-      <h1 data-deckster="true">{headingText}</h1>
-      {/* <div>{JSON.stringify(getParagraphObject(tokens))}</div> */}
+      <h1>{headingContent()}</h1>
+      {paragparhContent()}
     </Wrap>
   )
 }

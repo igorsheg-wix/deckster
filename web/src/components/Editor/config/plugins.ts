@@ -63,7 +63,7 @@ const logic = createMyPlugins(
     createDndPlugin(),
     createSoftBreakPlugin(CONFIG.softBreak),
     createExitBreakPlugin(CONFIG.exitBreak),
-    createResetNodePlugin(),
+    createResetNodePlugin(CONFIG.resetBlockType),
     // createTrailingBlockPlugin(CONFIG.trailingBlock),
     createSelectOnBackspacePlugin(CONFIG.selectOnBackspace),
   ],

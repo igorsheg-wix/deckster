@@ -11,7 +11,12 @@ export const HorizontalLineElement = <V extends Value>(
   const { attributes, children, nodeProps } = props
 
   return (
-    <div {...attributes} {...nodeProps} className={styles.root}>
+    <div
+      {...attributes}
+      {...nodeProps}
+      className={styles.root}
+      data-deckster-node="hr"
+    >
       <hr contentEditable={false} />
       {children}
     </div>

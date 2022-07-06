@@ -1,68 +1,11 @@
-import produce from 'immer'
-import type { Slide } from 'types'
-import create from 'zustand'
-import type { Descendant } from 'slate'
-import {
-  getBlockAbove,
-  isEndPoint,
-  withoutNormalizing,
-  insertText,
-  select,
-  withoutMergingHistory,
-  removeNodes,
-  insertNodes,
-  focusEditor,
-  PlateEditor,
-  Value,
-} from '@udecode/plate'
-import {
-  ELEMENT_DASHMENU_INPUT,
-  MenuItem,
-  MyValue,
-} from 'components/Editor/Editor.types'
-import { Range } from 'slate'
+import { PlateEditor, Value } from '@udecode/plate'
 import createElementOnSelectItem from 'components/Editor/components/DashMenu/createElementOnSelectItem'
 import blockMenuItems from 'components/Editor/components/DashMenu/menuItems'
-
-const onSelectItem = (editor: PlateEditor, item: string) => {
-  const pathAbove = getBlockAbove(editor)?.[1]
-  const isBlockEnd =
-    editor.selection &&
-    pathAbove &&
-    isEndPoint(editor, editor.selection.anchor, pathAbove)
-
-  // const isCursorAfterTrigger = getTextFromTrigger(editor, {
-  //   at: Range.start(editor.selection),
-  //   trigger: '/',
-  //   searchPattern: dashmenu.text,
-  // })
-  // if (!isCursorAfterTrigger) {
-  //   return
-  // }
-  // const { range, textAfterTrigger } = isCursorAfterTrigger
-
-  // const yay = select(editor, Range.start(editor.selection))
-  // console.log(yay)
-  withoutNormalizing(editor, () => {
-    if (isBlockEnd) {
-      insertText(editor, ' ')
-    }
-
-    editor.selection && select(editor, Range.start(editor.selection))
-
-    withoutMergingHistory(editor, () =>
-      removeNodes(editor, {
-        match: (node) => node.type === ELEMENT_DASHMENU_INPUT,
-      })
-    )
-
-    insertNodes(editor, {
-      type: item,
-      children: [{ text: '' }],
-    })
-    focusEditor(editor)
-  })
-}
+import { MenuItem } from 'components/Editor/Editor.types'
+import produce from 'immer'
+import type { Descendant } from 'slate'
+import type { Slide } from 'types'
+import create from 'zustand'
 
 interface DashMenuStore<V extends Value = Value> {
   isOpen: boolean

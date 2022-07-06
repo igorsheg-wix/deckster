@@ -8,7 +8,7 @@ import styles from './Editor.module.scss'
 
 const DecksterEditor = () => {
   const editableProps = {
-    placeholder: 'Strat typing your story...',
+    placeholder: "Type '/' to insert, or start writing…",
   }
 
   const handleEditorChange = (value: Value) => {}

@@ -76,8 +76,6 @@ export const withMention = <
       return false
     }
 
-    // editor.insertText(stripNewLineAndTrim(text))
-
     return true
   }
 
