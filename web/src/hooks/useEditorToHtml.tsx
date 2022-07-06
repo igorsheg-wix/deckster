@@ -1,0 +1,29 @@
+import { PlateEditor, Value, isType } from '@udecode/plate'
+import { useCallback } from 'react'
+import DOMPurify from 'dompurify'
+import parse from 'html-react-parser'
+import { serializeHtml } from 'utils/serializeHtml'
+
+export const useEditorTohtml = (
+  editor: PlateEditor<Value>,
+  tokens: Value,
+  type: string
+) => {
+  const ctxNodes = tokens.filter((n) => isType(editor, n, type))
+
+  const htmlString = useCallback(() => {
+    if (ctxNodes) {
+      const serializedNodes = serializeHtml(editor, {
+        nodes: ctxNodes,
+        convertNewLinesToHtmlBr: true,
+      })
+
+      return parse(
+        DOMPurify.sanitize(serializedNodes, { ALLOW_DATA_ATTR: true })
+      )
+    }
+    return null
+  }, [ctxNodes])
+
+  return htmlString
+}

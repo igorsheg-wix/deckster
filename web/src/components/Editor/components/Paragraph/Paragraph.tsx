@@ -9,13 +9,13 @@ interface ParagraphElementProps<V extends Value> extends ElementProps<V> {
 export const ParagraphElement = <V extends Value>(
   props: ParagraphElementProps<V>
 ) => {
-  const { attributes, className, children, nodeProps, as = 'p' } = props
+  const { attributes, children, nodeProps, as = 'p' } = props
 
-  const el = React.createElement(
-    as,
-    { ...attributes, ...nodeProps, 'data-deckster-node': 'p' },
-    ...children
+  const el = React.createElement(as, {}, ...children)
+
+  return (
+    <div {...attributes} {...nodeProps} data-deckster-node={as}>
+      {el}
+    </div>
   )
-
-  return <div>{el}</div>
 }

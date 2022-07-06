@@ -18,6 +18,12 @@
 html,
 body {
   height: 100%;
+  font-weight: 400;
+  line-height: 1.75;
+  color: #000000;
+  margin: 0;
+  padding: 0;
+  font-family: 'Madefor', sans-serif;
 }
 /*
   Typographic tweaks!
@@ -25,7 +31,7 @@ body {
   5. Improve text rendering
 */
 body {
-  line-height: 1.5;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
 }
 /*
@@ -63,10 +69,6 @@ h6 {
 /*
   9. Create a root stacking context
 */
-#root,
-#__next {
-  isolation: isolate;
-}
 
 p {
   margin-bottom: 1rem;
@@ -78,7 +80,7 @@ h3,
 h4,
 h5 {
   margin: 3rem 0 1.38rem;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Madefor', sans-serif;
   font-weight: 400;
   line-height: 1.3;
 }

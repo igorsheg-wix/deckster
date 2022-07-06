@@ -1,5 +1,8 @@
 import {
+  focusEditor,
   getBlockAbove,
+  insertBreak,
+  insertNode,
   insertText,
   isEndPoint,
   PlateEditor,
@@ -39,10 +42,22 @@ const createElementOnSelectItem = (
       })
     )
 
-    setNodes(editor, {
-      type: item.key,
-      children: [{ text: '' }],
-    })
+    if (item.key === 'hr') {
+      insertNode(editor, {
+        type: item.key,
+        children: [{ text: '' }],
+      })
+      // console.log(editor.selection?.anchor.path[0] + 1)
+
+      if (editor.selection) {
+        focusEditor(editor, [editor.selection?.anchor.path[0] + 1])
+      }
+    } else {
+      setNodes(editor, {
+        type: item.key,
+        children: [{ text: '' }],
+      })
+    }
   })
 }
 

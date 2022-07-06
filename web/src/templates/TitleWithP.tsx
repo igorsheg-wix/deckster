@@ -1,42 +1,8 @@
-import {
-  getNodeString,
-  isText,
-  isType,
-  PlateEditor,
-  serializeHtml,
-  Value,
-} from '@udecode/plate'
-import DOMPurify from 'dompurify'
-import parse from 'html-react-parser'
-import React, { useCallback, useEffect } from 'react'
+import { PlateEditor, Value } from '@udecode/plate'
+import { useEditorTohtml } from 'hooks/useEditorToHtml'
+import React from 'react'
 import styled from 'styled-components'
 import { pxToVw } from 'utils/calcs'
-import { marked as slideParser } from 'utils/slide-token-parser'
-const getParagraphObject = (editor: PlateEditor<Value>, nodes: Value) => {
-  const ctxNodes = nodes.filter((n) => isType(editor, n, 'p'))
-  console.log(isText(ctxNodes[0]))
-
-  return ctxNodes
-    ? serializeHtml(editor, {
-        nodes: ctxNodes,
-        convertNewLinesToHtmlBr: true,
-        stripWhitespace: false,
-      })
-    : ''
-}
-
-const getHeadingObject = (editor: PlateEditor<Value>, nodes: Value) => {
-  const ctxNode = nodes.find((n) => isType(editor, n, 'h1'))
-  console.log(ctxNode ? ctxNode.text : '')
-
-  return ctxNode
-    ? serializeHtml(editor, {
-        nodes: [ctxNode],
-        convertNewLinesToHtmlBr: true,
-        stripWhitespace: false,
-      })
-    : ''
-}
 
 interface SlideTemplate {
   tokens: Value
@@ -44,33 +10,13 @@ interface SlideTemplate {
 }
 
 const TitleAndParagraph = ({ tokens, editor }: SlideTemplate) => {
-  const headingNode = tokens.find((n) => isType(editor, n, 'h1'))
-  const paragraphNodes = tokens.filter((n) => isType(editor, n, 'p'))
-
-  const paragparhContent = useCallback(
-    () =>
-      parse(
-        DOMPurify.sanitize(getParagraphObject(editor, tokens), {
-          ALLOWED_TAGS: ['br'],
-        })
-      ),
-    [paragraphNodes]
-  )
-
-  const headingContent = useCallback(
-    () =>
-      parse(
-        DOMPurify.sanitize(getHeadingObject(editor, tokens), {
-          ALLOWED_TAGS: ['br'],
-        })
-      ),
-    [headingNode]
-  )
+  const heading = useEditorTohtml(editor, tokens, 'h1')
+  const paragraph = useEditorTohtml(editor, tokens, 'p')
 
   return (
     <Wrap>
-      <h1>{headingContent()}</h1>
-      {paragparhContent()}
+      {heading()}
+      {paragraph()}
     </Wrap>
   )
 }

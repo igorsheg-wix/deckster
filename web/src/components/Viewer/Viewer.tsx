@@ -1,37 +1,68 @@
-import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
-import { pxToVw } from 'utils/calcs'
 import {
   findNodePath,
   getNodeProps,
+  getPreviousNode,
+  PlateEditor,
+  usePlateSelection,
   usePlateSelectors,
   Value,
 } from '@udecode/plate'
 import { Slide } from 'components/Slide'
+import React, { useEffect } from 'react'
 import { Path } from 'slate'
 import useDecksterStore from 'stores'
+import styled from 'styled-components'
+import { pxToVw } from 'utils/calcs'
 import SlideUtils from 'utils/slide-utils'
+import * as ScrollArea from '@radix-ui/react-scroll-area'
+
+const gethrNodes = (editor: PlateEditor<Value>, editorValue: Value) => {
+  let hrNodes: Array<Path> = [[0]]
+
+  editorValue.map((node) => {
+    const { type } = getNodeProps(node)
+    const nodePath = findNodePath(editor, node)
+
+    if (type === 'hr' && nodePath) {
+      hrNodes.push(nodePath)
+    }
+  })
+  return hrNodes
+}
 
 const Viewer = () => {
   const editorValue = usePlateSelectors().value()
   const editor = usePlateSelectors().editor()
-  const [slideNodes, setSlideNodes] = useState<Record<'nodes', Value>[]>([])
-  const ref = React.createRef<HTMLDivElement>()
   const setDecksterStore = useDecksterStore((s) => s.set)
   const slides = useDecksterStore((s) => s.slides)
+  const selection = usePlateSelection()
+
+  useEffect(() => {
+    if (selection && editorValue && editor) {
+      const hrNodes = gethrNodes(editor, editorValue)
+      const prevHrNode = getPreviousNode(editor, {
+        match: (n) => n.type === 'hr',
+      })
+
+      if (prevHrNode && hrNodes.length) {
+        const currentSelectionHrIndex = hrNodes.findIndex(
+          (h) => h[0] === prevHrNode[1][0]
+        )
+
+        setDecksterStore((s) => {
+          s.cursorOnSlide = currentSelectionHrIndex
+        })
+      } else {
+        setDecksterStore((s) => {
+          s.cursorOnSlide = 0
+        })
+      }
+    }
+  }, [selection])
 
   useEffect(() => {
     if (editor && editorValue) {
-      let hrNodes: Array<Path> = [[0]]
-
-      editorValue.map((node) => {
-        const { type } = getNodeProps(node)
-        const nodePath = findNodePath(editor, node)
-
-        if (type === 'hr' && nodePath) {
-          hrNodes.push(nodePath)
-        }
-      })
+      const hrNodes = gethrNodes(editor, editorValue)
 
       const slideNodes = () => {
         let nodes: Record<'nodes', Value>[] = []
@@ -59,7 +90,7 @@ const Viewer = () => {
   }, [editorValue])
 
   return (
-    <Wrap ref={ref}>
+    <Wrap>
       {!slides.length ? (
         <Empty />
       ) : (
@@ -102,7 +133,8 @@ const Wrap = styled.div`
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
-  overflow: scroll;
+  overflow: hidden;
+  overflow-y: scroll;
   scroll-behaviour: smooth;
   max-height: calc(100vh - 96px);
   flex-direction: column;

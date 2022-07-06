@@ -1,4 +1,11 @@
-import { Plate, Value } from '@udecode/plate'
+import {
+  getCursorOverlayState,
+  getPath,
+  Plate,
+  usePlateSelectors,
+  Value,
+  usePlateSelection,
+} from '@udecode/plate'
 import React from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
@@ -11,14 +18,11 @@ const DecksterEditor = () => {
     placeholder: "Type '/' to insert, or start writing…",
   }
 
-  const handleEditorChange = (value: Value) => {}
-
   return (
     <>
       <DndProvider backend={HTML5Backend}>
         <div id="deckster-editor" className={styles.root}>
           <Plate
-            onChange={handleEditorChange}
             plugins={[
               ...PLUGINS.basicElements,
               ...PLUGINS.basicMarks,
